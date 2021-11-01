@@ -1,0 +1,48 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+# Currently all hooks are using python
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
+    hooks:
+      #  - id: no-commit-to-branch
+      #args: [--branch, master]
+      - id: check-merge-conflict
+      - id: check-added-large-files
+      - id: destroyed-symlinks
+      - id: check-symlinks
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: mixed-line-ending
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-executables-have-shebangs
+  - repo: https://github.com/ansible-community/ansible-lint.git
+    rev: v5.2.0
+    hooks:
+      - id: ansible-lint
+        name: Ansible-lint
+        description: This hook runs ansible-lint.
+        entry: ansible-lint --force-color ansible
+        language: python
+        files: \.(yaml|yml)$
+        # do not pass files to ansible-lint, see:
+        # https://github.com/ansible-community/ansible-lint/issues/611
+        pass_filenames: false
+        always_run: true
+  - repo: https://github.com/jumanjihouse/pre-commit-hooks
+    rev: 2.1.5
+    hooks:
+      - id: shellcheck
+        name: Test shell scripts with shellcheck
+        description: Shell scripts conform to shellcheck
+        entry: pre_commit_hooks/shellcheck
+        language: script
+        types: [shell]
+  #    args: [-e, SC1091]
+  - repo: https://github.com/pre-commit/mirrors-yapf
+    rev: "v0.31.0" # Use the sha / tag you want to point at
+    hooks:
+      - id: yapf
