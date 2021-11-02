@@ -1,0 +1,4 @@
+---
+add object.playbook:
+  - name: ilo_security_settings
+    description: Playbook to configure iLO security settings.

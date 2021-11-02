@@ -1,0 +1,22 @@
+---
+name: Pull request to master
+on:
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+env:
+  NAMESPACE: unbelievable
+  COLLECTION_NAME: hpe
+
+concurrency:
+  group: pull-request-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: CI tests
+    uses: the-unbelievable-machine/ansible_collection_hpe/.github/workflows/ci.yml@master
+    with:
+      ref: ${{ github.event.pull_request.head.sha }}

@@ -1,0 +1,9 @@
+plugin: unbelievable.hpe.oneview
+# user:
+# url:
+# password:
+# proxy: "socks5://127.0.0.1:10123"
+validate_certs: False
+hostname_short: False
+# add_domain: "my.domain"
+preferred_ip: IPv4

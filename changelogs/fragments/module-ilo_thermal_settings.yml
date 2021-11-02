@@ -1,0 +1,5 @@
+---
+add plugin.module:
+  - name: ilo_thermal_settings
+    namespace: unbelievable.hpe
+    description: Module to configure iLO thermal settings.

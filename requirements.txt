@@ -1,0 +1,6 @@
+# Requirements for building a release
+ansible-core>=2.11
+requests[socks]>=1.1
+git+https://github.com/ansible-network/collection_prep.git@0.9.4
+antsibull-changelog
+pre-commit

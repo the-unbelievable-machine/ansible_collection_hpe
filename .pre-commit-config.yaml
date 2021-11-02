@@ -5,8 +5,8 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.0.1
     hooks:
-      #  - id: no-commit-to-branch
-      #args: [--branch, master]
+      - id: no-commit-to-branch
+        args: [--branch, master]
       - id: check-merge-conflict
       - id: check-added-large-files
       - id: destroyed-symlinks
@@ -16,6 +16,7 @@ repos:
       - id: mixed-line-ending
       - id: detect-private-key
       - id: end-of-file-fixer
+        exclude: (RELEASE)|(CHANGELOG.rst)
       - id: check-yaml
       - id: check-json
       - id: check-executables-have-shebangs
@@ -42,7 +43,12 @@ repos:
         language: script
         types: [shell]
   #    args: [-e, SC1091]
-  - repo: https://github.com/pre-commit/mirrors-yapf
-    rev: "v0.31.0" # Use the sha / tag you want to point at
+  - repo: https://github.com/psf/black
+    rev: 21.9b0
     hooks:
-      - id: yapf
+      - id: black
+        language_version: python3
+  - repo: https://github.com/pycqa/flake8
+    rev: 4.0.1
+    hooks:
+      - id: flake8

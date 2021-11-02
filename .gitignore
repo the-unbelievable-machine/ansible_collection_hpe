@@ -370,7 +370,7 @@ tags
 
 ### VisualStudioCode ###
 .vscode/*
-#!.vscode/settings.json
+!.vscode/settings.json
 #!.vscode/tasks.json
 #!.vscode/launch.json
 #!.vscode/extensions.json
@@ -386,10 +386,12 @@ tags
 
 # End of https://www.toptal.com/developers/gitignore/api/ansible,python,intellij+all,sublimetext,vim,pycharm,visualstudiocode
 
-ansible-spock2-ssh.cfg
 
 # local tests
 **_test.ini
 **_test.yml
 
-um-hpe-*.tar.gz
+unbelievable-hpe-*.tar.gz
+
+
+dev_tools/inventories/*test.ini

@@ -1,0 +1,5 @@
+---
+add plugin.module:
+  - name: ilo_security_settings
+    namespace: unbelievable.hpe
+    description: Module to configure iLO security settings.

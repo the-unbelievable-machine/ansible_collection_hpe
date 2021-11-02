@@ -1,0 +1,73 @@
+---
+name: Build new release
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'RELEASE'
+
+env:
+  NAMESPACE: unbelievable
+  COLLECTION_NAME: hpe
+
+concurrency: release
+
+jobs:
+  ci:
+    name: CI tests
+    uses: the-unbelievable-machine/ansible_collection_hpe/.github/workflows/ci.yml@master
+
+  release:
+    name: Build release
+    runs-on: ubuntu-latest
+    needs: ci
+    steps:
+      - name: Initialize env vars
+        uses: briantist/ezenv@v1
+        with:
+          env: |
+            COLLECTION_PATH=ansible_collections/${NAMESPACE}/${COLLECTION_NAME}
+            VENV_HASH_FILES=${COLLECTION_PATH}/requirements.txt
+
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          path: ${{ env.COLLECTION_PATH }}
+          fetch-depth: 2
+
+      - name: Link to .github # easier access to local actions
+        run: ln -s "${COLLECTION_PATH}/.github" .github
+
+      - name: Cache .venv modules
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.COLLECTION_PATH }}/.venv
+          key: ${{ hashFiles(env.VENV_HASH_FILES) }}
+
+      - name: Create venv
+        working-directory: ${{ env.COLLECTION_PATH }}
+        run: make venv
+
+      - name: Run make build
+        working-directory: ${{ env.COLLECTION_PATH }}
+        run: make build
+
+      - name: Get version
+        uses: ./.github/actions/get-version
+        with:
+          working-directory: ${{ env.COLLECTION_PATH }}
+
+      # TODO: create a new github release with file ${NAMESPACE}-${COLLECTION_NAME}-${VERSION}.tar.gz
+
+      - name: Create tag
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            github.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: "refs/tags/v${{ env.VERSION }}",
+              sha: context.sha
+            })

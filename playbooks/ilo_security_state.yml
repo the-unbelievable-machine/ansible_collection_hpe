@@ -1,0 +1,28 @@
+---
+- name: 'Set iLO SecurityState'
+  hosts: '{{ target | default("iLO5") }}'
+
+  gather_facts: False
+
+  vars_prompt:
+    - name: ilo_password
+      prompt: iLO Password?
+    - name: ilo_security_state
+      prompt: |
+        Desired SecurityState:
+          - Production
+          - HighSecurity
+      private: no
+
+  tasks:
+    - name: 'Set iLO SecurityState'
+      unbelievable.hpe.ilo_security_settings:
+        security_state: '{{ ilo_security_state }}'
+        hostname: '{{ ansible_host | default(inventory_hostname) }}'
+        user: '{{ ilo_user | default("Administrator") }}'
+        password: '{{ ilo_password }}'
+        validate_certs: '{{ ilo_validate_certs | default(True) | bool }}'
+        port: '{{ ilo_port | default(omit) }}'
+        proxy: '{{ ilo_proxy |default(omit) }}'
+        protocol: '{{ ilo_protocol |default(omit) }}'
+      delegate_to: '{{ ilo_delegate_to | default("localhost") }}'

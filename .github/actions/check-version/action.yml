@@ -1,0 +1,47 @@
+---
+name: Check version
+description: |
+  Verify that version in
+    - VERSION
+    - galaxy.yml
+    - CHANGELOG.rst
+  are the same.
+inputs:
+  working-directory:
+    description: The working directory to operate under. This should be the collection's directory.
+    required: false
+outputs:
+  version:
+    description: 'Current version taken from RELEASE'
+    value: ${{ steps.read-version.outputs.version }}
+
+runs:
+  using: composite
+  steps:
+    - name: Get version
+      uses: ./.github/actions/get-version
+      with:
+        working-directory: ${{ inputs.working-directory }}
+
+    - name: Verify VERSION pattern
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        if [[ ! ${VERSION} =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?$ ]]; then
+          echo "ERROR: invalid version: $VERSION"
+          exit 1
+        fi
+
+    - name: Verify VERSION is the same in CHANGELOG.rst
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        grep -Pzo "v$VERSION\n==" CHANGELOG.rst
+
+    - name: Verify VERSION is the same as in galaxy.yml
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        ls
+        cat galaxy.yml
+        grep -cF "version: ${VERSION}" galaxy.yml

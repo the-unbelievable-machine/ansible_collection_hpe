@@ -1,0 +1,4 @@
+---
+add plugin.inventory:
+  - name: oneview
+    description: HPE OneView inventory source

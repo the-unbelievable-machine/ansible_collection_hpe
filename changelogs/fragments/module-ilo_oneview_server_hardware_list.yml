@@ -1,0 +1,5 @@
+---
+add plugin.module:
+  - name: oneview_server_hardware_list
+    namespace: unbelievable.hpe
+    description: Module to query OneView server hardware. Could be used to dynamically add hosts using ansible.builtin.add_host

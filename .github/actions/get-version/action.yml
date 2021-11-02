@@ -1,0 +1,24 @@
+---
+name: Get version
+description: Read version from RELEASE file
+inputs:
+  working-directory:
+    description: The working directory to operate under. This should be the collection's directory.
+    required: false
+outputs:
+  version:
+    description: 'Current version taken from RELEASE'
+    value: ${{ steps.read-version.outputs.version }}
+
+runs:
+  using: composite
+  steps:
+    - name: Read RELEASE file
+      id: read-version
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        VERSION=$(head -n 1 RELEASE)
+        echo "::set-output name=version::$VERSION"
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
+        echo "output version=$VERSION"

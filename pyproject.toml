@@ -1,0 +1,3 @@
+# Python code formatter ((https://black.readthedocs.io/en/stable/index.html))
+[tool.black]
+line-length = 120

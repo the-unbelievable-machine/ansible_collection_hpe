@@ -1,0 +1,8 @@
+# Requirements / Tools for development
+ansible-lint[community,yamllint]
+shellcheck-py
+yapf
+flake8
+black
+flask
+pytest

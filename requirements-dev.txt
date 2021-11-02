@@ -1,6 +1,0 @@
-ansible-lint[community,yamllint]
-pre-commit
-shellcheck-py
-yapf
-ansible-core>=2.11
-requests>=1.1
