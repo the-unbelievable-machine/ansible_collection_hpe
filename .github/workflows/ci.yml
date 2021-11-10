@@ -3,13 +3,6 @@
 # https://github.com/ansible-collections/community.hashi_vault/blob/11688707a08cb17eb609f82092c0b711953c2ba2/.github/workflows/ansible-test.yml
 name: CI
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - '**'
-      # handled in release workflow
-      - '!RELEASE'
   workflow_dispatch:
   workflow_call:
     inputs:
