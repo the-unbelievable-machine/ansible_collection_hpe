@@ -13,24 +13,31 @@ releases:
     - playbook-ilo_security_settings.yml
     - release-summary.yml
     modules:
-    - description: Module to configure iLO security settings.
+    - description: Manage iLO Security settings
       name: ilo_security_settings
-      namespace: unbelievable.hpe
-    - description: Module to configure iLO thermal settings.
+      namespace: ''
+    - description: Manage iLO Thermal settings
       name: ilo_thermal_settings
-      namespace: unbelievable.hpe
-    - description: Module to query OneView server hardware. Could be used to dynamically
-        add hosts using ansible.builtin.add_host
+      namespace: ''
+    - description: Generate a list of server hardware present in OneView
       name: oneview_server_hardware_list
-      namespace: unbelievable.hpe
+      namespace: ''
     objects:
-      playbook:
-      - description: Playbook to configure iLO security settings.
-        name: ilo_security_settings
-        namespace: null
+      playbook: []
     plugins:
       inventory:
       - description: HPE OneView inventory source
         name: oneview
         namespace: null
     release_date: '2021-11-10'
+  1.0.1:
+    changes:
+      bugfixes:
+      - Module oneview_server_hardware_list - support for check mode enabled.
+      release_summary: 'Bugfix release.
+
+        '
+    fragments:
+    - bugfix-oneview_server_hardware_list-checkmode.yml
+    - release-summary.yml
+    release_date: '2021-11-11'

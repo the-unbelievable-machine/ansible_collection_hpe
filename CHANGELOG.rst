@@ -5,6 +5,20 @@ unbelievable.hpe Release Notes
 .. contents:: Topics
 
 
+v1.0.1
+======
+
+Release Summary
+---------------
+
+Bugfix release.
+
+
+Bugfixes
+--------
+
+- Module oneview_server_hardware_list - support for check mode enabled.
+
 v1.0.0
 ======
 
@@ -25,17 +39,6 @@ Inventory
 New Modules
 -----------
 
-Unbelievable
-~~~~~~~~~~~~
-
-hpe
-^^^
-
-- unbelievable.hpe.unbelievable.hpe.ilo_security_settings - Module to configure iLO security settings.
-- unbelievable.hpe.unbelievable.hpe.ilo_thermal_settings - Module to configure iLO thermal settings.
-- unbelievable.hpe.unbelievable.hpe.oneview_server_hardware_list - Module to query OneView server hardware. Could be used to dynamically add hosts using ansible.builtin.add_host
-
-New Playbooks
--------------
-
-- unbelievable.hpe.ilo_security_settings - Playbook to configure iLO security settings.
+- unbelievable.hpe.ilo_security_settings - Manage iLO Security settings
+- unbelievable.hpe.ilo_thermal_settings - Manage iLO Thermal settings
+- unbelievable.hpe.oneview_server_hardware_list - Generate a list of server hardware present in OneView
