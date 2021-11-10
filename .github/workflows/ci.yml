@@ -219,7 +219,7 @@ jobs:
         if: steps.changed-files.outputs.any_changed  == 'true'
         run: |
           git fetch --tags
-          TAG=$(git tag -l v${VERSION})
+          TAG=$(git tag -l ${VERSION})
           test -z "${TAG}"
 
       - name: Generate python version hash

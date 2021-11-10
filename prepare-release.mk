@@ -31,7 +31,7 @@
 	git add docs/ changelogs/ galaxy.yml CHANGELOG.rst RELEASE README.md
 
 ifneq ($(NO_COMMIT),true)
-	git commit -m "Release v$(VERSION)"
+	git commit -m "Release $(VERSION)"
 ifneq ($(NO_PUSH),true)
 	git push -u origin HEAD
 else
@@ -52,7 +52,7 @@ endif
 
 	echo "Ensure git tag $(VERSION) doesn't exist ..."
 	git fetch --tags
-	@$(eval TAG := $(shell git tag -l v$(VERSION)))
+	@$(eval TAG := $(shell git tag -l $(VERSION)))
 	@test -z "$(TAG)"
 
 
