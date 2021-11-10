@@ -1,0 +1,36 @@
+objects:
+  role: {}
+plugins:
+  become: {}
+  cache: {}
+  callback: {}
+  cliconf: {}
+  connection: {}
+  httpapi: {}
+  inventory:
+    oneview:
+      description: HPE OneView inventory source
+      name: oneview
+      version_added: 1.0.0
+  lookup: {}
+  module:
+    ilo_security_settings:
+      description: Manage iLO Security settings
+      name: ilo_security_settings
+      namespace: ''
+      version_added: null
+    ilo_thermal_settings:
+      description: Manage iLO Thermal settings
+      name: ilo_thermal_settings
+      namespace: ''
+      version_added: null
+    oneview_server_hardware_list:
+      description: Generate a list of server hardware present in OneView
+      name: oneview_server_hardware_list
+      namespace: ''
+      version_added: null
+  netconf: {}
+  shell: {}
+  strategy: {}
+  vars: {}
+version: 1.0.0
