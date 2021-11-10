@@ -8,7 +8,7 @@ name: Guard version tag
 on:
   push:
     tags:
-      - v[0-9]+.[0-9]+.[0-9]+*
+      - '[0-9]+.[0-9]+.[0-9]+*'
 
 env:
   NAMESPACE: unbelievable
@@ -43,7 +43,7 @@ jobs:
         run: |
           TAG=${GITHUB_REF##*/}
           echo "TAG: $TAG"
-          [[ ${GITHUB_REF##*/} == "v${VERSION}" ]] || false
+          [[ ${GITHUB_REF##*/} == "${VERSION}" ]] || false
 
       - name: Delete tag
         uses: actions/github-script@v3

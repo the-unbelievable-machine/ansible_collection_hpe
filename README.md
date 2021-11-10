@@ -49,7 +49,7 @@ collections:
   - name: unbelievable.hpe
     source: https://github.com/the-unbelievable-machine/ansible_collection_hpe.git
     type: git
-    version: v1.0.0
+    version: 1.0.0
 ```
 
 ## Included content
