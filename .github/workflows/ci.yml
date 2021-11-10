@@ -223,7 +223,7 @@ jobs:
 
       - name: Ensure no git tag name like RELEASE exists
         working-directory: ${{ env.COLLECTION_PATH }}
-        if: steps.changed-files.outputs.any_changed
+        if: steps.changed-files.outputs.any_changed  == 'true'
         run: |
           git fetch --tags
           TAG=$(git tag -l v${VERSION})
