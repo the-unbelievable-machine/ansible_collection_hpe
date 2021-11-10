@@ -234,7 +234,7 @@ class OneViewServerHardwareModule(object):
 
     @staticmethod
     def main():
-        module = AnsibleModule(argument_spec=OneViewServerHardwareModule.argument_spec(), supports_check_mode=False)
+        module = AnsibleModule(argument_spec=OneViewServerHardwareModule.argument_spec(), supports_check_mode=True)
         OneViewServerHardwareModule(module).run()
 
 

@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - Module oneview_server_hardware_list - support for check mode enabled.
