@@ -1,0 +1,36 @@
+ancestor: null
+releases:
+  1.0.0:
+    changes:
+      release_summary: 'First release
+
+        '
+    fragments:
+    - inventory-oneview.yml
+    - module-ilo_oneview_server_hardware_list.yml
+    - module-ilo_security_settings.yml
+    - module-ilo_thermal_settings.yml
+    - playbook-ilo_security_settings.yml
+    - release-summary.yml
+    modules:
+    - description: Module to configure iLO security settings.
+      name: ilo_security_settings
+      namespace: unbelievable.hpe
+    - description: Module to configure iLO thermal settings.
+      name: ilo_thermal_settings
+      namespace: unbelievable.hpe
+    - description: Module to query OneView server hardware. Could be used to dynamically
+        add hosts using ansible.builtin.add_host
+      name: oneview_server_hardware_list
+      namespace: unbelievable.hpe
+    objects:
+      playbook:
+      - description: Playbook to configure iLO security settings.
+        name: ilo_security_settings
+        namespace: null
+    plugins:
+      inventory:
+      - description: HPE OneView inventory source
+        name: oneview
+        namespace: null
+    release_date: '2021-11-10'

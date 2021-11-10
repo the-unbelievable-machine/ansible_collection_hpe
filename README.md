@@ -14,6 +14,13 @@ See also [Ansible Collection for HPE OneView](https://github.com/HewlettPackard/
 
 <!-- markdownlint-disable -->
 <!--start requires_ansible-->
+## Ansible version compatibility
+
+This collection has been tested against following Ansible versions: **>= 2.9**.
+
+Plugins and modules within a collection may be tested with only specific Ansible versions.
+A collection may contain metadata that identifies these versions.
+PEP440 is the schema used to describe the versions of Ansible.
 <!--end requires_ansible-->
 <!-- markdownlint-enable -->
 ## Python Support
@@ -26,7 +33,6 @@ Note: Python2 is deprecated from [1st January 2020](https://www.python.org/doc/s
 
 > **⚠️ WARNING**  
 > Currently the collection is not available via Ansible Galaxy.
-
 
 Before using the collection, you need to install it with the Ansible Galaxy CLI:
 
@@ -55,6 +61,18 @@ Click on the name of a plugin or module to view that content's documentation:
 <!--end requires_ansible-->
 
 <!--start collection content-->
+### Inventory plugins
+Name | Description
+--- | ---
+[unbelievable.hpe.oneview](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v1.0.0/docs/unbelievable.hpe.oneview_inventory.rst)|HPE OneView inventory source
+
+### Modules
+Name | Description
+--- | ---
+[unbelievable.hpe.ilo_security_settings](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v1.0.0/docs/unbelievable.hpe.ilo_security_settings_module.rst)|Manage iLO Security settings
+[unbelievable.hpe.ilo_thermal_settings](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v1.0.0/docs/unbelievable.hpe.ilo_thermal_settings_module.rst)|Manage iLO Thermal settings
+[unbelievable.hpe.oneview_server_hardware_list](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v1.0.0/docs/unbelievable.hpe.oneview_server_hardware_list_module.rst)|Generate a list of server hardware present in OneView
+
 <!--end collection content-->
 <!-- markdownlint-enable -->
 

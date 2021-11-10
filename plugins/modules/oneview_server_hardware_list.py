@@ -210,7 +210,7 @@ class OneViewServerHardwareModule(object):
             result["inventory"] = self.inventory.get_inventory()
             add_vars = self.module.params.get("add_vars")
             if add_vars:
-                for _, host in result["inventory"]["hosts"].items():
+                for host in result["inventory"]["hosts"].values():
                     host.setdefault("vars", dict()).update(add_vars)
             self.module.exit_json(**result)
         except BaseException as e:
