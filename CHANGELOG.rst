@@ -5,6 +5,20 @@ unbelievable.hpe Release Notes
 .. contents:: Topics
 
 
+v1.0.2
+======
+
+Release Summary
+---------------
+
+Bugfix release.
+
+
+Bugfixes
+--------
+
+- remove prefix 'v' from version tags
+
 v1.0.1
 ======
 

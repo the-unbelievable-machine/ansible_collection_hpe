@@ -124,7 +124,7 @@ If no ticket exists for your change, just drop the prefix.
     - changelogs/
     - CHANGELOG.rst
     - galaxy.yml
-  - Run `git commit -m "Release v<VERSION>"` unless parameter `NO_COMMIT=true` is used.
+  - Run `git commit -m "Release <VERSION>"` unless parameter `NO_COMMIT=true` is used.
   - Run `git push -u origin HEAD` unless parameter `NO_PUSH=true` is used.
 
 - Create a pull-request via GitHub.
@@ -141,7 +141,7 @@ If no ticket exists for your change, just drop the prefix.
   This will trigger GitHub workflow `Pull request to master`.
 
 - If workflow `Pull request to master` succeeded, merging the request into branch `master` will trigger
-  another GitHub workflow: `Build new release`. This workflow will run checks and create a new tag `v<VERSION>`
+  another GitHub workflow: `Build new release`. This workflow will run checks and create a new tag `<VERSION>`
   if all checks succeeded.
 
 > **🗨️ HINT**  

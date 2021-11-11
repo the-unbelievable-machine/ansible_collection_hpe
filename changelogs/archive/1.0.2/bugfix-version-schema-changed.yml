@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - remove prefix 'v' from version tags
