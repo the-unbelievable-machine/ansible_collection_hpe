@@ -22,8 +22,6 @@ releases:
     - description: Generate a list of server hardware present in OneView
       name: oneview_server_hardware_list
       namespace: ''
-    objects:
-      playbook: []
     plugins:
       inventory:
       - description: HPE OneView inventory source
@@ -39,5 +37,16 @@ releases:
         '
     fragments:
     - bugfix-oneview_server_hardware_list-checkmode.yml
+    - release-summary.yml
+    release_date: '2021-11-11'
+  1.0.2:
+    changes:
+      bugfixes:
+      - remove prefix 'v' from version tags
+      release_summary: 'Bugfix release.
+
+        '
+    fragments:
+    - bugfix-version-schema-changed.yml
     - release-summary.yml
     release_date: '2021-11-11'

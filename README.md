@@ -64,14 +64,14 @@ Click on the name of a plugin or module to view that content's documentation:
 ### Inventory plugins
 Name | Description
 --- | ---
-[unbelievable.hpe.oneview](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v1.0.1/docs/unbelievable.hpe.oneview_inventory.rst)|HPE OneView inventory source
+[unbelievable.hpe.oneview](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v1.0.2/docs/unbelievable.hpe.oneview_inventory.rst)|HPE OneView inventory source
 
 ### Modules
 Name | Description
 --- | ---
-[unbelievable.hpe.ilo_security_settings](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v1.0.1/docs/unbelievable.hpe.ilo_security_settings_module.rst)|Manage iLO Security settings
-[unbelievable.hpe.ilo_thermal_settings](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v1.0.1/docs/unbelievable.hpe.ilo_thermal_settings_module.rst)|Manage iLO Thermal settings
-[unbelievable.hpe.oneview_server_hardware_list](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v1.0.1/docs/unbelievable.hpe.oneview_server_hardware_list_module.rst)|Generate a list of server hardware present in OneView
+[unbelievable.hpe.ilo_security_settings](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v1.0.2/docs/unbelievable.hpe.ilo_security_settings_module.rst)|Manage iLO Security settings
+[unbelievable.hpe.ilo_thermal_settings](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v1.0.2/docs/unbelievable.hpe.ilo_thermal_settings_module.rst)|Manage iLO Thermal settings
+[unbelievable.hpe.oneview_server_hardware_list](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v1.0.2/docs/unbelievable.hpe.oneview_server_hardware_list_module.rst)|Generate a list of server hardware present in OneView
 
 <!--end collection content-->
 <!-- markdownlint-enable -->
