@@ -55,6 +55,13 @@ extends_documentation_fragment:
 """
 
 EXAMPLES = r"""
+- name: Set iLO ThermalSettings
+  unbelievable.hpe.ilo_thermal_settings:
+      thermal_configuration: MaximumCooling
+      hostname: '{{ inventory_hostname }}'
+      user: user
+      password: secret
+      delegate_to: localhost
 """
 
 
