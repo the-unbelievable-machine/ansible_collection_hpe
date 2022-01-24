@@ -34,6 +34,13 @@ extends_documentation_fragment:
 """
 
 EXAMPLES = r"""
+- name: Set iLO SecurityState
+  unbelievable.hpe.ilo_security_settings:
+      security_state: HighSecurity
+      hostname: '{{ inventory_hostname }}'
+      user: user
+      password: secret
+      delegate_to: localhost
 """
 
 

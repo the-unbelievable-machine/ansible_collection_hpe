@@ -1,0 +1,5 @@
+---
+add plugin.module:
+  - name: oneview_racks_info
+    namespace: unbelievable.hpe
+    description: Module to list racks in oneview with basic information about mounted units.

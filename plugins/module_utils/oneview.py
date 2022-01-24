@@ -7,9 +7,16 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-from abc import abstractmethod
-from distutils.version import LooseVersion
 
+from distutils.version import LooseVersion
+from ansible_collections.unbelievable.hpe.plugins.module_utils.logger import SilentLogger, ModuleLogger  # type: ignore
+from ansible_collections.unbelievable.hpe.plugins.module_utils.api_client import JsonRestApiClient  # type: ignore
+from traceback import format_exc
+from ansible.module_utils.basic import AnsibleModule, missing_required_lib
+from ansible.module_utils.six.moves.urllib.parse import urlencode  # type: ignore
+
+REQUESTS_IMP_ERR = None
+HAS_REQUESTS = False
 try:
     import requests
 
@@ -17,116 +24,217 @@ try:
         raise ImportError
     HAS_REQUESTS = True
 except ImportError:
+    REQUESTS_IMP_ERR = format_exc()
     HAS_REQUESTS = False
 
 
-class Logger(object):
-    @abstractmethod
-    def debug(self, msg):
+class OneViewApiClient(JsonRestApiClient):
+    def __init__(
+        self,
+        protocol,
+        host,
+        port,
+        username,
+        password,
+        validate_certs=True,
+        proxy=None,
+        api_version="800",
+        logger=SilentLogger(),
+    ):
+        super(OneViewApiClient, self).__init__(
+            protocol=protocol,
+            host=host,
+            port=port,
+            username=username,
+            password=password,
+            validate_certs=validate_certs,
+            proxy=proxy,
+        )
+
+        self.api_version = api_version
+        self.logger = logger
+        self.session = None
+
+    def get_headers(self):
+        headers = {"X-API-Version": self.api_version}
+        if self.session:
+            headers["Auth"] = self.session
+        return headers
+
+    def login(self):
+        endpoint = "/rest/login-sessions"
+        payload = {"userName": self.username, "password": self.password, "loginMsgAck": "true"}
+        json = self.post_request(endpoint, payload)
+        self.session = json.get("sessionID")
+        self.logger.debug("OneViewApiClient: Login successful")
+
+    def logout(self):
+        if self.session:
+            endpoint = "/rest/login-sessions"
+            self.delete_request(endpoint)
+            self.session = None
+            self.logger.debug("OneViewApiClient: Logout successful")
+
+    def list_server_hardware(self, filter=None):
+        next_url = "/rest/server-hardware"
+        if filter:
+            next_url += "?filter=" + urlencode(filter)
+        server = []
+        while True:
+            self.logger.debug("OneViewApiClient: {0}".format(next_url))
+            data = self.get_request(next_url)
+            if data["members"]:
+                server += data["members"]
+                next_url = data.get("nextPageUri", "")
+                if not next_url:
+                    break
+            else:
+                break
+        return server
+
+    def list_racks(self):
+        next_url = "/rest/racks"
+        racks = []
+        while True:
+            self.logger.debug("OneViewApiClient: {0}".format(next_url))
+            data = self.get_request(next_url)
+            if data["members"]:
+                racks += data["members"]
+                next_url = data.get("nextPageUri", "")
+                if not next_url:
+                    break
+            else:
+                break
+        return racks
+
+
+class OneviewModuleBase(object):
+    def main(self):
+        # define available arguments/parameters a user can pass to the module
+        argument_spec = OneviewModuleBase.argument_spec()
+        argument_spec.update(self.additional_argument_spec())
+
+        self.module = AnsibleModule(
+            argument_spec=argument_spec, supports_check_mode=self.supports_check_mode(), **self.module_def_extras()
+        )
+
+        if not HAS_REQUESTS:
+            self.module.fail_json(msg=missing_required_lib("requests"), exception=REQUESTS_IMP_ERR)
+
+        try:
+            self.api_client = self.get_api_client()
+            self.result = dict(
+                changed=False,
+                diff=None,
+            )
+
+            self.init()
+            self.run()
+            self.module.exit_json(**self.result)
+        except BaseException as e:
+            self.module.fail_json(e)
+
+    def supports_check_mode(self):
+        return True
+
+    def additional_argument_spec(self):
+        """Overwrite this to provide additional module argument specs"""
+        return dict()
+
+    def module_def_extras(self):
+        return dict()
+
+    def init(self):
+        """Overwrite this to init your module"""
         pass
 
-    @abstractmethod
-    def info(self, msg):
+    def run(self):
+        """Overwrite this to implement the module action"""
         pass
 
-    @abstractmethod
-    def warn(self, msg):
-        pass
+    def get_api_client(self):
+        return OneViewApiClient(
+            protocol=self.module.params.get("protocol"),
+            host=self.module.params.get("hostname"),
+            port=self.module.params.get("port"),
+            username=self.module.params.get("username"),
+            password=self.module.params.get("password"),
+            validate_certs=self.module.params.get("validate_certs"),
+            api_version=self.module.params.get("api_version"),
+            proxy=self.module.params.get("proxy") if "proxy" in self.module.params else None,
+            logger=ModuleLogger(self.module),
+        )
+
+    def set_changed(self, changed):
+        self.result["changed"] = changed
+
+    def set_changes(self, before=None, after=None):
+        self.result["diff"] = {"before": before, "after": after}
+        self.set_changed(before != after)
+
+    def set_message(self, message):
+        self.result["message"] = message
+
+    @staticmethod
+    def argument_spec():
+        return dict(
+            protocol=dict(
+                type="str", choices=["http", "https"], required=False, default="https", aliases=["oneview_protocol"]
+            ),
+            hostname=dict(type="str", required=True, aliases=["host", "url", "oneview_url"]),
+            port=dict(type="int", default=443, aliases=["oneview_port"]),
+            username=dict(type="str", required=True, aliases=["user", "oneview_user"]),
+            password=dict(type="str", required=True, aliases=["passwd", "oneview_password"], no_log=True),
+            validate_certs=dict(type="bool", required=False, default=True),
+            api_version=dict(type="str", default="800", aliases=["oneview_api_version"]),
+            proxy=dict(type="str", required=False),
+        )
 
 
-class ModuleLogger(Logger):
-    def __init__(self, module):
-        super().__init__()
-        self.module = module
+class ApiHelper(object):
+    class Host(object):
+        @staticmethod
+        def mpHostName(host):
+            name = None
+            if host:
+                if "mpHostInfo" in host:
+                    name = host.get("mpHostInfo", {}).get("mpHostName", None)
+                elif "mpDnsName" in host:
+                    name = host.get("mpDnsName", None)
+            return name
 
-    def debug(self, msg):
-        self.module.debug(msg)
+        @staticmethod
+        def mpHostIpv4(host):
+            return ApiHelper.Host._mpHostIp(host, ".")
 
-    def info(self, msg):
-        self.module.log(msg)
+        @staticmethod
+        def mpHostIpv6(host):
+            return ApiHelper.Host._mpHostIp(host, ":")
 
-    def warn(self, msg):
-        self.module.log("[warn] {0}".format(msg))
-
-
-class BaseInventoryPluginLogger(Logger):
-    def __init__(self, plugin):
-        super().__init__()
-        self.plugin = plugin
-
-    def debug(self, msg):
-        self.plugin.display.vv(msg)
-
-    def info(self, msg):
-        self.plugin.display.v(msg)
-
-    def warn(self, msg):
-        self.plugin.display.warning(msg)
-
-
-class Inventory(object):
-    @abstractmethod
-    def add_group(self, group):
-        pass
-
-    @abstractmethod
-    def add_child_group(self, parent, child):
-        pass
-
-    @abstractmethod
-    def add_host_to_group(self, group, host):
-        pass
-
-    @abstractmethod
-    def add_host(self, host, variables=None, group=None):
-        pass
+        @staticmethod
+        def _mpHostIp(host, identifier):
+            address = None
+            if host:
+                if "mpHostInfo" in host:
+                    for a in host.get("mpHostInfo", {}).get("mpIpAddresses", []):
+                        if a.get("type", "") == "Static" and identifier in a.get("address", ""):
+                            address = a.get("address")
+                elif "mpIpAddress" in host and identifier in host.get("mpIpAddress", ""):
+                    address = host.get("mpIpAddress", None)
+            return address
 
 
-class OneViewInventory(object):
+class OneViewInventoryBuilder(object):
 
     MAIN_GROUP = "oneview_members"
 
-    def __init__(self):
-        super().__init__()
-        self.base_url = None
-        self.username = None
-        self.password = None
-        self.validate_certs = True
-        self.preferred_ip = "IPv4"
-        self.session = None
-        self.proxies = None
-        self.logger = None
-        if not HAS_REQUESTS:
-            raise ImportError(
-                "oneview: This module requires Python Requests 1.1.0 or higher: https://github.com/psf/requests."
-            )
-
-    def init(
-        self,
-        base_url,
-        username,
-        password,
-        inventory,
-        logger,
-    ):
-        self.base_url = base_url
-        self.username = username
-        self.password = password
+    def __init__(self, api_client, inventory):
+        self.api_client = api_client
         self.inventory = inventory
-        self.logger = logger
-
-    def set_validate_certs(self, validate_certs):
-        self.validate_certs = validate_certs
+        self.preferred_ip = "IPv4"
 
     def set_preferred_ip(self, preferred_ip):
         self.preferred_ip = preferred_ip
-
-    def set_proxy(self, proxy):
-        if proxy:
-            self.proxies = {"http": proxy, "https": proxy}
-        else:
-            self.proxies = None
-        proxy = None
 
     def set_hostname_short(self, hostname_short):
         self.hostname_short = hostname_short
@@ -134,71 +242,18 @@ class OneViewInventory(object):
     def set_add_domain(self, add_domain):
         self.add_domain = add_domain
 
-    def _get_headers(self):
-        headers = {"X-API-Version": "800"}
-        if self.session:
-            headers["Auth"] = self.session
-        return headers
-
-    def _get_request(self, uri_path):
-        url = "{0}{1}".format(self.base_url, uri_path)
-        r = requests.get(url, headers=self._get_headers(), verify=self.validate_certs, proxies=self.proxies)
-
-        if r.ok:
-            return r.json()
-        else:
-            r.raise_for_status
-
-    def login(self):
-
-        data_get = {"userName": self.username, "password": self.password, "loginMsgAck": "true"}
-        r = requests.post(
-            "{0}/rest/login-sessions".format(self.base_url),
-            json=data_get,
-            headers=self._get_headers(),
-            verify=self.validate_certs,
-            proxies=self.proxies,
-        )
-        if r.ok:
-            self.session = r.json().get("sessionID")
-            self.logger.debug("oneview: Login successful")
-        else:
-            raise r.raise_for_status
-
-    def logout(self):
-        if self.session:
-            r = requests.delete(
-                "{0}/rest/login-sessions".format(self.base_url),
-                headers=self._get_headers(),
-                verify=self.validate_certs,
-                proxies=self.proxies,
-            )
-            if r.ok:
-                self.session = None
-                self.logger.debug("oneview: Logout successful")
-            else:
-                self.logger.debug("oneview: Logout failed")
-
     def populate(self):
-        next_url = "/rest/server-hardware"
-        while True:
-            self.logger.debug("oneview: query {0}".format(next_url))
-            data = self._list_hardware(next_url)
-            self.inventory.add_group(OneViewInventory.MAIN_GROUP)
-            self._process_hardware_list(data)
-            next_url = data.get("nextPageUri", "")
-            if not next_url:
-                break
+        try:
+            self.api_client.login()
+            self._populate()
+        finally:
+            self.api_client.logout()
 
-    def _list_hardware(self, uri_path):
-        return self._get_request(uri_path)
-
-    def _process_hardware_list(self, data):
-        if not data:
-            self.logger.warn("oneview: got no hardware_list")
-            return
-        for member in data.get("members", []):
-            name, host_vars = self._process_hardware_member(member)
+    def _populate(self):
+        hosts_raw = self.api_client.list_server_hardware()
+        self.inventory.add_group(OneViewInventoryBuilder.MAIN_GROUP)
+        for host in hosts_raw:
+            name, host_vars = self._process_hardware_host(host)
             shortModel = host_vars["shortModel"].replace(" ", "_")  # i.e. DL360 Gen10
             self.inventory.add_group(shortModel)
             self.inventory.add_child_group(self.MAIN_GROUP, shortModel)
@@ -208,16 +263,16 @@ class OneViewInventory(object):
             self.inventory.add_host(name, variables=host_vars, group=shortModel)
             self.inventory.add_host_to_group(mpModel, name)
 
-    def _process_hardware_member(self, member):
-        name = member["mpHostInfo"]["mpHostName"].lower()
+    def _process_hardware_host(self, host):
+        name = host["mpHostInfo"]["mpHostName"].lower()
         if self.hostname_short:
             name = name.split(".")[0]
         elif self.add_domain:
             name = name.split(".")[0] + "." + self.add_domain
         host_vars = dict()
-        host_vars["shortModel"] = member.get("shortModel")
-        host_vars["mpModel"] = member.get("mpModel")
-        for mp_ip_address in member["mpHostInfo"]["mpIpAddresses"]:
+        host_vars["shortModel"] = host.get("shortModel")
+        host_vars["mpModel"] = host.get("mpModel")
+        for mp_ip_address in host["mpHostInfo"]["mpIpAddresses"]:
             if mp_ip_address["type"] == "Static":
                 ip = mp_ip_address["address"]
                 host_vars["ansible_host"] = ip

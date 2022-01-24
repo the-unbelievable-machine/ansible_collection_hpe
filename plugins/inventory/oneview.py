@@ -34,16 +34,47 @@ options:
         choices: ['unbelievable.hpe.oneview']
         type: str
         version_added: 1.0.0
-    url:
+    protocol:
         description:
-            - URL of OneView host.
+            - Protocol to use when connecting to OneView.
             - If the value is not specified in the inventory configuration, the value of environment variable
-                C(ONEVIEW_URL) will be used instead.
+                C(ONEVIEW_PROTOCOL) will be used instead.
+        choices: ['http', 'https']
+        type: str
+        default: 'https'
+        env:
+            - name: ONEVIEW_PROTOCOL
+        version_added: 2.0.0
+    host:
+        description:
+            - Hostname to use when connecting to OneView.
+            - If the value is not specified in the inventory configuration, the value of environment variable
+                C(ONEVIEW_HOST) will be used instead.
         type: str
         required: yes
         env:
-            - name: ONEVIEW_URL
-        version_added: 1.0.0
+            - name: ONEVIEW_HOST
+        version_added: 2.0.0
+    port:
+        description:
+            - Port to use when connecting to OneView.
+            - If the value is not specified in the inventory configuration, the value of environment variable
+                C(ONEVIEW_PORT) will be used instead.
+        type: int
+        default: 443
+        env:
+            - name: ONEVIEW_PORT
+        version_added: 2.0.0
+    api_version:
+        description:
+            - OneView REST api version.
+            - If the value is not specified in the inventory configuration, the value of environment variable
+                C(ONEVIEW_API_VERSION) will be used instead.
+        type: str
+        default: '800'
+        env:
+            - name: ONEVIEW_API_VERSION
+        version_added: 2.0.0
     user:
         description:
             - OneView api authentication user.
@@ -83,7 +114,7 @@ options:
     hostname_short:
         description: Ues short hostnames.
         type: bool
-        default: yes
+        default: no
         version_added: 1.0.0
     add_domain:
         description:
@@ -93,52 +124,28 @@ options:
         version_added: 1.0.0
     proxy:
         description:
-            - Proxy to use when accessing OneView API.
+            - Proxy (hostname+port) to use when connecting to OneView.
             - If the value is not specified in the inventory configuration, the value of environment variable
                 C(ONEVIEW_PROXY) will be used instead.
-            - if requests where installed like 'pip install requests[socks]', then socks proxies
-                are supported.
-            - "example: http://localhost:8080"
-        required: no
         type: str
+        required: no
         env:
             - name: ONEVIEW_PROXY
-        version_added: 1.0.0
+        version_added: 2.0.0
 """
 
+from ansible_collections.unbelievable.hpe.plugins.module_utils.logger import InventoryPluginLogger  # type: ignore
+from ansible_collections.unbelievable.hpe.plugins.module_utils.inventory import InventoryPluginInventory  # type: ignore
 from ansible_collections.unbelievable.hpe.plugins.module_utils.oneview import (  # type: ignore
-    OneViewInventory,
-    BaseInventoryPluginLogger,
-    Inventory,
+    OneViewApiClient,
+    OneViewInventoryBuilder,
 )
 from ansible.plugins.inventory import BaseInventoryPlugin
-
-
-class BaseInventoryPluginInventory(Inventory):
-    def __init__(self, plugin):
-        super().__init__()
-        self.plugin = plugin
-
-    def add_group(self, group):
-        self.plugin.inventory.add_group(group)
-
-    def add_child_group(self, parent, child):
-        self.plugin.inventory.add_child(parent, child)
-
-    def add_host_to_group(self, group, host):
-        self.plugin.inventory.add_child(group, host)
-
-    def add_host(self, host, variables=None, group=None):
-        self.plugin._populate_host_vars(hosts=[host], variables=variables, group=group)
 
 
 class InventoryModule(BaseInventoryPlugin):
 
     NAME = "unbelievable.hpe.oneview"
-
-    def __init__(self):
-        super(InventoryModule, self).__init__()
-        self.oneview_inventory = OneViewInventory()
 
     def verify_file(self, path):
         valid = False
@@ -147,7 +154,7 @@ class InventoryModule(BaseInventoryPlugin):
                 valid = True
             else:
                 self.display.vv(
-                    "oneview: Skipping due to inventory source not ending in 'onview.yaml' nor 'onview.yml'"
+                    "oneview: Skipping due to inventory source not ending in 'oneview.yaml' nor 'oneview.yml'"
                 )
         return valid
 
@@ -155,24 +162,21 @@ class InventoryModule(BaseInventoryPlugin):
         super(InventoryModule, self).parse(inventory, loader, path, cache=False)
         self._read_config_data(path)
 
-        self.oneview_inventory.init(
-            base_url=self.get_option("url"),
+        api_client = OneViewApiClient(
+            protocol=self.get_option("protocol"),
+            host=self.get_option("host"),
+            port=self.get_option("port"),
             username=self.get_option("user"),
             password=self.get_option("password"),
-            inventory=BaseInventoryPluginInventory(self),
-            logger=BaseInventoryPluginLogger(self),
+            validate_certs=self.get_option("validate_certs"),
+            proxy=self.get_option("proxy"),
+            api_version=self.get_option("api_version"),
+            logger=InventoryPluginLogger(self),
         )
-
-        self.oneview_inventory.set_validate_certs(self.get_option("validate_certs"))
-        self.oneview_inventory.set_preferred_ip(self.get_option("preferred_ip"))
-        self.oneview_inventory.set_hostname_short(self.get_option("hostname_short"))
-        if self.has_option("proxy"):
-            self.oneview_inventory.set_proxy(self.get_option("proxy"))
+        oneview_inventory_builder = OneViewInventoryBuilder(api_client, InventoryPluginInventory(self))
+        oneview_inventory_builder.set_preferred_ip(self.get_option("preferred_ip"))
+        oneview_inventory_builder.set_hostname_short(self.get_option("hostname_short"))
         if self.has_option("add_domain"):
-            self.oneview_inventory.set_add_domain(self.get_option("add_domain"))
+            oneview_inventory_builder.set_add_domain(self.get_option("add_domain"))
 
-        try:
-            self.oneview_inventory.login()
-            self.oneview_inventory.populate()
-        finally:
-            self.oneview_inventory.logout()
+        oneview_inventory_builder.populate()

@@ -1,0 +1,3 @@
+---
+breaking_changes:
+  - Renamed module 'oneview_server_hardware_list' to 'oneview_inventory'
