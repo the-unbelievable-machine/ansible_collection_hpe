@@ -21,7 +21,7 @@ repos:
       - id: check-json
       - id: check-executables-have-shebangs
   - repo: https://github.com/ansible-community/ansible-lint.git
-    rev: v5.2.0
+    rev: v5.3.2
     hooks:
       - id: ansible-lint
         name: Ansible-lint
