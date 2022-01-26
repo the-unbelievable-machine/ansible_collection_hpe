@@ -66,8 +66,8 @@ options:
     api_version:
         description:
             - OneView API version.
-        default: '800'
-        type: str
+        default: 2400
+        type: int
         aliases: [oneview_api_version]
         version_added: 2.0.0
 """

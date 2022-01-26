@@ -19,6 +19,54 @@ short_description: Content of /rest/racks endpoint of OneView
 description:
     - Content of /rest/racks endpoint of OneView
 
+options:
+    rack_entry_fields:
+        description:
+            - List of fields to copy from oneview's /rest/racks api result to copy.
+        type: list
+        elements: str
+        default: [
+            "name",
+            "id",
+            "depth",
+            "height",
+            "width",
+            "model",
+            "partNumber",
+            "serialNumber",
+            "thermalLimit",
+            "uHeight"]
+        version_added: 2.0.0
+    rackmount_entry_fields:
+        description:
+            - List of fields to copy from oneview's /rest/racks api result, section 'rackMounts' to copy.
+        type: list
+        elements: str
+        default: [
+            "location",
+            "topUSlot",
+            "uHeight"]
+        version_added: 2.0.0
+    hwinfo_entry_fields:
+        description:
+            - List of fields to copy from oneview's api result, when looking up 'mountUri' field.
+            - "There are some special fieldnames:
+              rs_mpHostName=takes mkHostInfo.mpHostName if exists else mpDnsName.
+              rs_mpIpAddress4=first IPv4 address from mpHostInfo.mpIpAddresses with type = static.
+              rs_mpIpAddress6=first IPv6 address from mpHostInfo.mpIpAddresses with type = static"
+        type: list
+        elements: str
+        default: [
+            "name",
+            "serverName",
+            "category",
+            "shortModel",
+            "formFactor",
+            "uuid",
+            "rs_mpHostName",
+            "rs_mpIpAddress4"]
+        version_added: 2.0.0
+
 extends_documentation_fragment:
     - unbelievable.hpe.oneview_api_client
 """
@@ -36,115 +84,60 @@ RETURN = r"""
 racks:
     description:
         - List of racks. Always present, but may be empty.
+        - Content depends on api_version and configuration.
     returned: success
-    type: complex
+    type: list
     elements: dict
-    contains:
-        name:
-            type: str
-            description: Rack name
-        id:
-            type: str
-            description: OneView uuid for entry
-        depth:
-            type: int
-            description: rack depth
-        height:
-            type: int
-            description: rack depth
-        model:
-            type: str
-            description: rack model
-        partNumber:
-            type: str
-            description: partNumber
-        serialNumber:
-            type: str
-            description: serialNumber
-        thermalLimit:
-            type: str
-            description: thermalLimit
-        uHeight:
-            type: int
-            description: uHeight
-        rackMounts:
-            description: Units mounted in rack
-            type: complex
-            elements: dict
-            contains:
-                category:
-                    type: str
-                    description: OneView category
-                formFactor:
-                    type: str
-                    description: formFactor
-                location:
-                    type: str
-                    description: location
-                mpHostName:
-                    type: str
-                    description: iLO hostname
-                mpIpAddress:
-                    type: str
-                    description: iLO ip address
-                name:
-                    type: str
-                    description: name
-                partNumber:
-                    type: str
-                    description: partNumber
-                serialNumber:
-                    type: str
-                    description: serialNumber
-                serverName:
-                    type: str
-                    description: serverName
-                shortModel:
-                    type: str
-                    description: shortModel
-                topUSlot:
-                    type: str
-                    description: topUSlot
-                uHeight:
-                    type: int
-                    description: uHeight
-                uuid:
-                    type: str
-                    description: OneView uuid for device
 """
 
 
 from ansible_collections.unbelievable.hpe.plugins.module_utils.oneview import OneviewModuleBase, ApiHelper  # type: ignore # noqa: E501
-from ansible_collections.unbelievable.hpe.plugins.module_utils.api_client import copy_entries, set_not_none  # type: ignore # noqa: E501
 
 
 class OneViewRacksInfo(OneviewModuleBase):
+    def additional_argument_spec(self):
+        return dict(
+            rack_entry_fields=dict(
+                type="list",
+                required=False,
+                elements="str",
+                default=[
+                    "name",
+                    "id",
+                    "depth",
+                    "height",
+                    "width",
+                    "model",
+                    "partNumber",
+                    "serialNumber",
+                    "thermalLimit",
+                    "uHeight",
+                ],
+            ),
+            rackmount_entry_fields=dict(
+                type="list", required=False, elements="str", default=["location", "topUSlot", "uHeight"]
+            ),
+            hwinfo_entry_fields=dict(
+                type="list",
+                required=False,
+                elements="str",
+                default=[
+                    "name",
+                    "serverName",
+                    "category",
+                    "shortModel",
+                    "formFactor",
+                    "uuid",
+                    "rs_mpHostName",
+                    "rs_mpIpAddress4",
+                ],
+            ),
+        )
 
-    rack_entries = [
-        "name",
-        "id",
-        "depth",
-        "height",
-        "width",
-        "model",
-        "partNumber",
-        "serialNumber",
-        "thermalLimit",
-        "uHeight",
-    ]
-
-    rack_mount_entries = ["location", "topUSlot", "uHeight", "relativeOrder"]
-
-    hw_info_entries = [
-        "name",
-        "serverName",
-        "category",
-        "shortModel",
-        "formFactor",
-        "serialNumber",
-        "uuid",
-        "partNumber",
-    ]
+    def init(self):
+        self.rack_entry_fields = self.module.params.get("rack_entry_fields")
+        self.rackmount_entry_fields = self.module.params.get("rackmount_entry_fields")
+        self.hwinfo_entry_fields = self.module.params.get("hwinfo_entry_fields")
 
     def run(self):
         self.api_client.login()
@@ -154,24 +147,22 @@ class OneViewRacksInfo(OneviewModuleBase):
         self.api_client.logout()
 
     def _process_racks(self, racks_raw):
+        # to satisfy ansible tests
         import requests
 
         racks = []
         for r in racks_raw:
             rack = {"rackMounts": []}
             racks.append(rack)
-            copy_entries(r, rack, OneViewRacksInfo.rack_entries, copy_empty=False)
+            rack.update(ApiHelper.copy_entries(r, self.rack_entry_fields))
             for m in r.get("rackMounts", []):
                 mount = {}
                 rack["rackMounts"].append(mount)
-                copy_entries(m, mount, OneViewRacksInfo.rack_mount_entries, copy_empty=False)
-                if m["mountUri"]:
+                mount.update(ApiHelper.copy_entries(m, self.rackmount_entry_fields))
+                if m["mountUri"] and self.hwinfo_entry_fields:
                     try:
-                        mount_info = self.api_client.get_request(m["mountUri"])
-                        copy_entries(mount_info, mount, OneViewRacksInfo.hw_info_entries, copy_empty=False)
-                        set_not_none(mount, "mpHostName", ApiHelper.Host.mpHostName(mount_info))
-                        set_not_none(mount, "mpIpAddress", ApiHelper.Host.mpHostIpv4(mount_info))
-
+                        hwinfo = self.api_client.get_request(m["mountUri"])
+                        mount.update(ApiHelper.copy_entries(hwinfo, self.hwinfo_entry_fields))
                     except requests.HTTPError as e:
                         if e.response.status_code != 404:
                             raise e

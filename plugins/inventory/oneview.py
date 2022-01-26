@@ -70,8 +70,8 @@ options:
             - OneView REST api version.
             - If the value is not specified in the inventory configuration, the value of environment variable
                 C(ONEVIEW_API_VERSION) will be used instead.
-        type: str
-        default: '800'
+        type: int
+        default: 2400
         env:
             - name: ONEVIEW_API_VERSION
         version_added: 2.0.0
