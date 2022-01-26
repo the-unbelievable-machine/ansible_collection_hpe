@@ -395,3 +395,4 @@ unbelievable-hpe-*.tar.gz
 
 
 dev_tools/inventories/*test.ini
+dev_tools/inventories/test_oneview.yml

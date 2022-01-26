@@ -20,17 +20,6 @@ except ImportError:
     HAS_REQUESTS = False
 
 
-def copy_entries(src, dest, entries, copy_empty=True):
-    for entry in entries:
-        if entry in src or copy_empty:
-            dest[entry] = src.get(entry, None)
-
-
-def set_not_none(dest, key, val):
-    if val is not None:
-        dest[key] = val
-
-
 class JsonRestApiClient(object):
     def __init__(self, protocol, host, port, username, password, validate_certs=True, proxy=None):
         if not HAS_REQUESTS:

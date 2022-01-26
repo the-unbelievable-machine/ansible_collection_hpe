@@ -38,7 +38,7 @@ class OneViewApiClient(JsonRestApiClient):
         password,
         validate_certs=True,
         proxy=None,
-        api_version="800",
+        api_version=2400,
         logger=SilentLogger(),
     ):
         super(OneViewApiClient, self).__init__(
@@ -56,7 +56,7 @@ class OneViewApiClient(JsonRestApiClient):
         self.session = None
 
     def get_headers(self):
-        headers = {"X-API-Version": self.api_version}
+        headers = {"X-API-Version": str(self.api_version)}
         if self.session:
             headers["Auth"] = self.session
         return headers
@@ -186,12 +186,29 @@ class OneviewModuleBase(object):
             username=dict(type="str", required=True, aliases=["user", "oneview_user"]),
             password=dict(type="str", required=True, aliases=["passwd", "oneview_password"], no_log=True),
             validate_certs=dict(type="bool", required=False, default=True),
-            api_version=dict(type="str", default="800", aliases=["oneview_api_version"]),
+            api_version=dict(type="int", default=2400, aliases=["oneview_api_version"]),
             proxy=dict(type="str", required=False),
         )
 
 
 class ApiHelper(object):
+    @staticmethod
+    def copy_entries(src, entries):
+        result = {}
+        for entry in entries:
+            val = None
+            if entry == "rs_mpHostName":
+                val = ApiHelper.Host.mpHostName(src)
+            elif entry == "rs_mpIpAddress4":
+                val = ApiHelper.Host.mpHostIp4(src)
+            elif entry == "rs_mpIpAddress6":
+                val = ApiHelper.Host.mpHostIp6(src)
+            else:
+                val = src.get(entry, None)
+            if val is not None:
+                result[entry] = val
+        return result
+
     class Host(object):
         @staticmethod
         def mpHostName(host):
@@ -204,11 +221,11 @@ class ApiHelper(object):
             return name
 
         @staticmethod
-        def mpHostIpv4(host):
+        def mpHostIp4(host):
             return ApiHelper.Host._mpHostIp(host, ".")
 
         @staticmethod
-        def mpHostIpv6(host):
+        def mpHostIp6(host):
             return ApiHelper.Host._mpHostIp(host, ":")
 
         @staticmethod
