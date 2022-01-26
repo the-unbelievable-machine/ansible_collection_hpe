@@ -19,9 +19,6 @@ releases:
     - description: Manage iLO Thermal settings
       name: ilo_thermal_settings
       namespace: ''
-    - description: Generate a list of server hardware present in OneView
-      name: oneview_server_hardware_list
-      namespace: ''
     plugins:
       inventory:
       - description: HPE OneView inventory source
@@ -50,3 +47,31 @@ releases:
     - bugfix-version-schema-changed.yml
     - release-summary.yml
     release_date: '2021-11-11'
+  2.0.0:
+    changes:
+      breaking_changes:
+      - Renamed module 'oneview_server_hardware_list' to 'oneview_inventory'
+      release_summary: 'Rewrite of oneview modules.
+
+
+        Renamed module ''oneview_server_hardware_list'' to ''oneview_inventory''
+
+        Added module ''oneview_racks_info''
+
+        Added module ''oneview_server_hardware_info''
+
+        '
+    fragments:
+    - module_oneview_racks_info.yml
+    - module_oneview_server_hardware_info.yml
+    - release-summary.yml
+    - rename_oneview_server_hardware_list.yml
+    modules:
+    - description: Module to list racks in oneview with basic information about mounted
+        units.
+      name: oneview_racks_info
+      namespace: unbelievable.hpe
+    - description: Module to list server hardware from OneView.
+      name: oneview_server_hardware_info
+      namespace: unbelievable.hpe
+    release_date: '2022-01-26'

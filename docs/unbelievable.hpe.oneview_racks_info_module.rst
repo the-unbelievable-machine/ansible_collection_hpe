@@ -1,14 +1,13 @@
-.. _unbelievable.hpe.oneview_inventory:
+.. _unbelievable.hpe.oneview_racks_info_module:
 
 
-************************
-unbelievable.hpe.oneview
-************************
+***********************************
+unbelievable.hpe.oneview_racks_info
+***********************************
 
-**HPE OneView inventory source**
+**Content of /rest/racks endpoint of OneView**
 
 
-Version added: 1.0.0
 
 .. contents::
    :local:
@@ -17,20 +16,9 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Get iLO hosts from a HPE OneView.
-- For each host model ('shortModel' from OneView) a group will be created containing all hosts with this host model. Example: 'DL360_Gen10'
-- For each iLO major version ('mpModel' from OneView) a group will be created containing all hosts with this host model. Example: 'iLO5'
-- All groups are children of group 'oneview_members'
-- Host vars 'shortModel' and 'mpModel will be set
-- Uses a configuration file as an inventory source, it must end with ``oneview.yml`` or ``oneview.yaml``
+- Content of /rest/racks endpoint of OneView
 
 
-
-Requirements
-------------
-The below requirements are needed on the local Ansible controller node that executes this inventory.
-
-- requests >= 1.1
 
 
 Parameters
@@ -42,28 +30,8 @@ Parameters
         <tr>
             <th colspan="1">Parameter</th>
             <th>Choices/<font color="blue">Defaults</font></th>
-                <th>Configuration</th>
             <th width="100%">Comments</th>
         </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>add_domain</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 1.0.0</div>
-                </td>
-                <td>
-                </td>
-                    <td>
-                    </td>
-                <td>
-                        <div>Add domain to hostname.</div>
-                        <div>Requires <code>hostname_short</code> to be <code>no</code>.</div>
-                </td>
-            </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
@@ -77,18 +45,15 @@ Parameters
                 <td>
                         <b>Default:</b><br/><div style="color: blue">2400</div>
                 </td>
-                    <td>
-                                <div>env:ONEVIEW_API_VERSION</div>
-                    </td>
                 <td>
-                        <div>OneView REST api version.</div>
-                        <div>If the value is not specified in the inventory configuration, the value of environment variable <code>ONEVIEW_API_VERSION</code> will be used instead.</div>
+                        <div>OneView API version.</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: oneview_api_version</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>host</b>
+                    <b>hostname</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
@@ -98,34 +63,28 @@ Parameters
                 </td>
                 <td>
                 </td>
-                    <td>
-                                <div>env:ONEVIEW_HOST</div>
-                    </td>
                 <td>
-                        <div>Hostname to use when connecting to OneView.</div>
-                        <div>If the value is not specified in the inventory configuration, the value of environment variable <code>ONEVIEW_HOST</code> will be used instead.</div>
+                        <div>The hostname or IP address of the OneView server</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: host, url, oneview_url</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>hostname_short</b>
+                    <b>hwinfo_entry_fields</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
+                        <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=string</span>
                     </div>
-                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 1.0.0</div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 2.0.0</div>
                 </td>
                 <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
-                                    <li>yes</li>
-                        </ul>
+                        <b>Default:</b><br/><div style="color: blue">["name", "serverName", "category", "shortModel", "formFactor", "uuid", "rs_mpHostName", "rs_mpIpAddress4"]</div>
                 </td>
-                    <td>
-                    </td>
                 <td>
-                        <div>Ues short hostnames.</div>
+                        <div>List of fields to copy from oneview&#x27;s api result, when looking up &#x27;mountUri&#x27; field.</div>
+                        <div>There are some special fieldnames: rs_mpHostName=takes mkHostInfo.mpHostName if exists else mpDnsName. rs_mpIpAddress4=first IPv4 address from mpHostInfo.mpIpAddresses with type = static. rs_mpIpAddress6=first IPv6 address from mpHostInfo.mpIpAddresses with type = static</div>
                 </td>
             </tr>
             <tr>
@@ -141,34 +100,9 @@ Parameters
                 </td>
                 <td>
                 </td>
-                    <td>
-                                <div>env:ONEVIEW_PASSWORD</div>
-                    </td>
                 <td>
                         <div>OneView authentication password.</div>
-                        <div>If the value is not specified in the inventory configuration, the value of environment variable <code>ONEVIEW_PASSWORD</code> will be used instead.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>plugin</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                         / <span style="color: red">required</span>
-                    </div>
-                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 1.0.0</div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>unbelievable.hpe.oneview</li>
-                        </ul>
-                </td>
-                    <td>
-                    </td>
-                <td>
-                        <div>The name of this plugin, it should always be set to <code>um.hpe.oneview</code> for this plugin to recognize it as it&#x27;s own.</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: passwd, oneview_password</div>
                 </td>
             </tr>
             <tr>
@@ -184,34 +118,9 @@ Parameters
                 <td>
                         <b>Default:</b><br/><div style="color: blue">443</div>
                 </td>
-                    <td>
-                                <div>env:ONEVIEW_PORT</div>
-                    </td>
                 <td>
-                        <div>Port to use when connecting to OneView.</div>
-                        <div>If the value is not specified in the inventory configuration, the value of environment variable <code>ONEVIEW_PORT</code> will be used instead.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>preferred_ip</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 1.0.0</div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>IPv4</b>&nbsp;&larr;</div></li>
-                                    <li>IPv6</li>
-                        </ul>
-                </td>
-                    <td>
-                    </td>
-                <td>
-                        <div>Preferred source for ansible_host IP address.</div>
+                        <div>Port to use when connecting to the OneView server</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: oneview_port</div>
                 </td>
             </tr>
             <tr>
@@ -230,12 +139,10 @@ Parameters
                                     <li><div style="color: blue"><b>https</b>&nbsp;&larr;</div></li>
                         </ul>
                 </td>
-                    <td>
-                                <div>env:ONEVIEW_PROTOCOL</div>
-                    </td>
                 <td>
-                        <div>Protocol to use when connecting to OneView.</div>
-                        <div>If the value is not specified in the inventory configuration, the value of environment variable <code>ONEVIEW_PROTOCOL</code> will be used instead.</div>
+                        <div>Protocol to use when connecting to the OneView server</div>
+                        <div>Mainly for testing / devloping.</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: oneview_protocol</div>
                 </td>
             </tr>
             <tr>
@@ -246,22 +153,56 @@ Parameters
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
                     </div>
-                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 2.0.0</div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 1.0.0</div>
                 </td>
                 <td>
                 </td>
-                    <td>
-                                <div>env:ONEVIEW_PROXY</div>
-                    </td>
                 <td>
-                        <div>Proxy (hostname+port) to use when connecting to OneView.</div>
-                        <div>If the value is not specified in the inventory configuration, the value of environment variable <code>ONEVIEW_PROXY</code> will be used instead.</div>
+                        <div>Proxy to use when accessing OneView API.</div>
+                        <div>if requests where installed like &#x27;pip install requests[socks]&#x27;, then socks proxies are supported.</div>
+                        <div>example: http://localhost:8080</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>user</b>
+                    <b>rack_entry_fields</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=string</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 2.0.0</div>
+                </td>
+                <td>
+                        <b>Default:</b><br/><div style="color: blue">["name", "id", "depth", "height", "width", "model", "partNumber", "serialNumber", "thermalLimit", "uHeight"]</div>
+                </td>
+                <td>
+                        <div>List of fields to copy from oneview&#x27;s /rest/racks api result to copy.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>rackmount_entry_fields</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=string</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 2.0.0</div>
+                </td>
+                <td>
+                        <b>Default:</b><br/><div style="color: blue">["location", "topUSlot", "uHeight"]</div>
+                </td>
+                <td>
+                        <div>List of fields to copy from oneview&#x27;s /rest/racks api result, section &#x27;rackMounts&#x27; to copy.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>username</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
@@ -271,12 +212,9 @@ Parameters
                 </td>
                 <td>
                 </td>
-                    <td>
-                                <div>env:ONEVIEW_USER</div>
-                    </td>
                 <td>
                         <div>OneView api authentication user.</div>
-                        <div>If the value is not specified in the inventory configuration, the value of environment variable <code>ONEVIEW_USER</code> will be used instead.</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: user, oneview_user</div>
                 </td>
             </tr>
             <tr>
@@ -295,12 +233,8 @@ Parameters
                                     <li><div style="color: blue"><b>yes</b>&nbsp;&larr;</div></li>
                         </ul>
                 </td>
-                    <td>
-                                <div>env:ONEVIEW_VALIDATE_CERTS</div>
-                    </td>
                 <td>
                         <div>Verify SSL certificate if using HTTPS.</div>
-                        <div>If the value is not specified in the inventory configuration, the value of environment variable <code>ONEVIEW_VALIDATE_CERTS</code> will be used instead.</div>
                 </td>
             </tr>
     </table>
@@ -309,8 +243,51 @@ Parameters
 
 
 
+Examples
+--------
+
+.. code-block:: yaml
+
+    - name: Get rack_info
+      unbelievable.oneview_racks_info:
+        hostname: https://oneview.server.domain
+        username: user
+        password: secret
+      register: racks
 
 
+
+Return Values
+-------------
+Common return values are documented `here <https://docs.ansible.com/ansible/latest/reference_appendices/common_return_values.html#common-return-values>`_, the following are the fields unique to this module:
+
+.. raw:: html
+
+    <table border=0 cellpadding=0 class="documentation-table">
+        <tr>
+            <th colspan="1">Key</th>
+            <th>Returned</th>
+            <th width="100%">Description</th>
+        </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>racks</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">list</span>
+                       / <span style="color: purple">elements=dictionary</span>
+                    </div>
+                </td>
+                <td>success</td>
+                <td>
+                            <div>List of racks. Always present, but may be empty.</div>
+                            <div>Content depends on api_version and configuration.</div>
+                    <br/>
+                </td>
+            </tr>
+    </table>
+    <br/><br/>
 
 
 Status
@@ -321,7 +298,3 @@ Authors
 ~~~~~~~
 
 - Janne K. Olesen (@jakrol)
-
-
-.. hint::
-    Configuration entries for each entry type have a low to high priority order. For example, a variable that is lower in the list will override a variable that is higher up.

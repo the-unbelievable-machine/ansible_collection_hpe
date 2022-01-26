@@ -24,13 +24,23 @@ plugins:
       name: ilo_thermal_settings
       namespace: ''
       version_added: null
-    oneview_server_hardware_list:
-      description: Generate a list of server hardware present in OneView
-      name: oneview_server_hardware_list
+    oneview_inventory:
+      description: Generates the same information as the oneview_inventory plugin.
+      name: oneview_inventory
+      namespace: ''
+      version_added: null
+    oneview_racks_info:
+      description: Content of /rest/racks endpoint of OneView
+      name: oneview_racks_info
+      namespace: ''
+      version_added: null
+    oneview_server_hardware_info:
+      description: Content of /rest/server-hardware endpoint of OneView
+      name: oneview_server_hardware_info
       namespace: ''
       version_added: null
   netconf: {}
   shell: {}
   strategy: {}
   vars: {}
-version: 1.0.2
+version: 2.0.0

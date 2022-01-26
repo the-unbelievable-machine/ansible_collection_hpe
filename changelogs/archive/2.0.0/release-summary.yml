@@ -1,0 +1,7 @@
+---
+release_summary: |
+  Rewrite of oneview modules.
+
+  Renamed module 'oneview_server_hardware_list' to 'oneview_inventory'
+  Added module 'oneview_racks_info'
+  Added module 'oneview_server_hardware_info'
