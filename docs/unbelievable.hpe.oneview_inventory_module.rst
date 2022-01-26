@@ -1,11 +1,11 @@
-.. _unbelievable.hpe.oneview_server_hardware_list_module:
+.. _unbelievable.hpe.oneview_inventory_module:
 
 
-*********************************************
-unbelievable.hpe.oneview_server_hardware_list
-*********************************************
+**********************************
+unbelievable.hpe.oneview_inventory
+**********************************
 
-**Generate a list of server hardware present in OneView**
+**Generates the same information as the oneview_inventory plugin.**
 
 
 
@@ -16,7 +16,6 @@ unbelievable.hpe.oneview_server_hardware_list
 
 Synopsis
 --------
-- Generate a list of server hardware present in OneView
 - This list could be used to dynamically add hosts using ``ansible.builtin.add_host``.
 - See also inventory plugin ``unbelievable.hpe.oneview``
 
@@ -70,6 +69,42 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>api_version</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">integer</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 2.0.0</div>
+                </td>
+                <td>
+                        <b>Default:</b><br/><div style="color: blue">2400</div>
+                </td>
+                <td>
+                        <div>OneView API version.</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: oneview_api_version</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>hostname</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                         / <span style="color: red">required</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 2.0.0</div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The hostname or IP address of the OneView server</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: host, url, oneview_url</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>hostname_short</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -102,7 +137,25 @@ Parameters
                 </td>
                 <td>
                         <div>OneView authentication password.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: oneview_password, passwd</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: passwd, oneview_password</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>port</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">integer</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 2.0.0</div>
+                </td>
+                <td>
+                        <b>Default:</b><br/><div style="color: blue">443</div>
+                </td>
+                <td>
+                        <div>Port to use when connecting to the OneView server</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: oneview_port</div>
                 </td>
             </tr>
             <tr>
@@ -128,6 +181,28 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>protocol</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 2.0.0</div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>http</li>
+                                    <li><div style="color: blue"><b>https</b>&nbsp;&larr;</div></li>
+                        </ul>
+                </td>
+                <td>
+                        <div>Protocol to use when connecting to the OneView server</div>
+                        <div>Mainly for testing / devloping.</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: oneview_protocol</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>proxy</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -139,25 +214,8 @@ Parameters
                 </td>
                 <td>
                         <div>Proxy to use when accessing OneView API.</div>
+                        <div>if requests where installed like &#x27;pip install requests[socks]&#x27;, then socks proxies are supported.</div>
                         <div>example: http://localhost:8080</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>url</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                         / <span style="color: red">required</span>
-                    </div>
-                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 1.0.0</div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>URL of OneView host.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: oneview_url</div>
                 </td>
             </tr>
             <tr>
@@ -175,7 +233,7 @@ Parameters
                 </td>
                 <td>
                         <div>OneView api authentication user.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: oneview_user, user</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: user, oneview_user</div>
                 </td>
             </tr>
             <tr>
@@ -210,10 +268,10 @@ Examples
 .. code-block:: yaml
 
     - name: Get server from Oneview
-      unbelievable.oneview_server_hardware_list:
-        url: https://oneview.server.domain
-        username: Admin
-        password: secret
+      unbelievable.oneview_inventory:
+          url: https://oneview.server.domain
+          username: Admin
+          password: secret
       register: inv
 
 
