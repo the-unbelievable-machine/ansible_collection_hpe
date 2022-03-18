@@ -1,0 +1,5 @@
+---
+add plugin.module:
+  - name: ilo_smartstorage_raids
+    namespace: unbelievable.hpe
+    description: Module to manage SmartStorage raid configuration
