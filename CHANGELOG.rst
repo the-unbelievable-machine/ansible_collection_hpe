@@ -5,6 +5,28 @@ unbelievable.hpe Release Notes
 .. contents:: Topics
 
 
+v2.1.0
+======
+
+Release Summary
+---------------
+
+New modules added.
+
+
+New Modules
+-----------
+
+Unbelievable
+~~~~~~~~~~~~
+
+hpe
+^^^
+
+- unbelievable.hpe.unbelievable.hpe.ilo_boot_order - Module to manage the boot order
+- unbelievable.hpe.unbelievable.hpe.ilo_power_state - Module to manage server power state via iLO.
+- unbelievable.hpe.unbelievable.hpe.ilo_smartstorage_raids - Module to manage SmartStorage raid configuration
+
 v2.0.0
 ======
 
@@ -26,14 +48,8 @@ Breaking Changes / Porting Guide
 New Modules
 -----------
 
-Unbelievable
-~~~~~~~~~~~~
-
-hpe
-^^^
-
-- unbelievable.hpe.unbelievable.hpe.oneview_racks_info - Module to list racks in oneview with basic information about mounted units.
-- unbelievable.hpe.unbelievable.hpe.oneview_server_hardware_info - Module to list server hardware from OneView.
+- unbelievable.hpe.oneview_racks_info - Content of /rest/racks endpoint of OneView
+- unbelievable.hpe.oneview_server_hardware_info - Content of /rest/server-hardware endpoint of OneView
 
 v1.0.2
 ======

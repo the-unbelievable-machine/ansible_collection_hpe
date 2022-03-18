@@ -67,11 +67,31 @@ releases:
     - release-summary.yml
     - rename_oneview_server_hardware_list.yml
     modules:
-    - description: Module to list racks in oneview with basic information about mounted
-        units.
+    - description: Content of /rest/racks endpoint of OneView
       name: oneview_racks_info
-      namespace: unbelievable.hpe
-    - description: Module to list server hardware from OneView.
+      namespace: ''
+    - description: Content of /rest/server-hardware endpoint of OneView
       name: oneview_server_hardware_info
-      namespace: unbelievable.hpe
+      namespace: ''
     release_date: '2022-01-26'
+  2.1.0:
+    changes:
+      release_summary: 'New modules added.
+
+        '
+    fragments:
+    - module-ilo_boot_order.yml
+    - module-ilo_power_state.yml
+    - module-ilo_smartstorage_raids.yml
+    - release-summary.yml
+    modules:
+    - description: Module to manage the boot order
+      name: ilo_boot_order
+      namespace: unbelievable.hpe
+    - description: Module to manage server power state via iLO.
+      name: ilo_power_state
+      namespace: unbelievable.hpe
+    - description: Module to manage SmartStorage raid configuration
+      name: ilo_smartstorage_raids
+      namespace: unbelievable.hpe
+    release_date: '2022-03-18'

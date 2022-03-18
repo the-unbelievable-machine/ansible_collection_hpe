@@ -14,9 +14,24 @@ plugins:
       version_added: 1.0.0
   lookup: {}
   module:
+    ilo_boot_order:
+      description: Manage boot order
+      name: ilo_boot_order
+      namespace: ''
+      version_added: null
+    ilo_power_state:
+      description: Manage server power state via iLO
+      name: ilo_power_state
+      namespace: ''
+      version_added: null
     ilo_security_settings:
       description: Manage iLO Security settings
       name: ilo_security_settings
+      namespace: ''
+      version_added: null
+    ilo_smartstorage_raids:
+      description: Create/configure/delete smartstorage raids
+      name: ilo_smartstorage_raids
       namespace: ''
       version_added: null
     ilo_thermal_settings:
@@ -43,4 +58,4 @@ plugins:
   shell: {}
   strategy: {}
   vars: {}
-version: 2.0.0
+version: 2.1.0
