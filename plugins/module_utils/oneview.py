@@ -8,24 +8,14 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-from distutils.version import LooseVersion
 from ansible_collections.unbelievable.hpe.plugins.module_utils.logger import SilentLogger, ModuleLogger  # type: ignore
-from ansible_collections.unbelievable.hpe.plugins.module_utils.api_client import JsonRestApiClient  # type: ignore
-from traceback import format_exc
+from ansible_collections.unbelievable.hpe.plugins.module_utils.api_client import (  # type: ignore
+    JsonRestApiClient,
+    HAS_REQUESTS,
+    REQUESTS_IMP_ERR,
+)
 from ansible.module_utils.basic import AnsibleModule, missing_required_lib
 from ansible.module_utils.six.moves.urllib.parse import urlencode  # type: ignore
-
-REQUESTS_IMP_ERR = None
-HAS_REQUESTS = False
-try:
-    import requests
-
-    if LooseVersion(requests.__version__) < LooseVersion("1.1.0"):
-        raise ImportError
-    HAS_REQUESTS = True
-except ImportError:
-    REQUESTS_IMP_ERR = format_exc()
-    HAS_REQUESTS = False
 
 
 class OneViewApiClient(JsonRestApiClient):
