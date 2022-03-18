@@ -1,5 +1,9 @@
 {
-    "python.pythonPath": ".venv/bin/python",
     "python.formatting.provider": "black",
-    "yaml.format.singleQuote": true
+    "yaml.format.singleQuote": true,
+    "python.linting.flake8Enabled": true,
+    "editor.formatOnSave": true,
+    "python.linting.flake8Args": [
+        "--config=${workspaceFolder}/.flake8"
+    ]
 }
