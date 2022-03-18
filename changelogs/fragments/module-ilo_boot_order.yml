@@ -1,0 +1,5 @@
+---
+add plugin.module:
+  - name: ilo_boot_order
+    namespace: unbelievable.hpe
+    description: Module to manage the boot order
