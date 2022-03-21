@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - Module ilo_boot_order: Fixes bug "type object 'ILOBootOrder' has no attribute 'ENDPOINT'"

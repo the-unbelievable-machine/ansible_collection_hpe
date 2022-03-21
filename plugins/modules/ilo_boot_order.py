@@ -90,7 +90,7 @@ class ILOBootOrder(RedfishModuleBase):
 
         if not self.module.check_mode and current_pending_order != new_order:
             self.result["response"] = self.api_client.patch_request(
-                ILOBootOrder.ENDPOINT, {"PersistentBootConfigOrder": new_order}
+                "Systems/1/Bios/boot/settings", {"PersistentBootConfigOrder": new_order}
             )
 
     def compute_new_order(self, settings):
