@@ -5,6 +5,15 @@ unbelievable.hpe Release Notes
 .. contents:: Topics
 
 
+v2.1.1
+======
+
+Release Summary
+---------------
+
+Bugfix release
+
+
 v2.1.0
 ======
 
@@ -17,15 +26,9 @@ New modules added.
 New Modules
 -----------
 
-Unbelievable
-~~~~~~~~~~~~
-
-hpe
-^^^
-
-- unbelievable.hpe.unbelievable.hpe.ilo_boot_order - Module to manage the boot order
-- unbelievable.hpe.unbelievable.hpe.ilo_power_state - Module to manage server power state via iLO.
-- unbelievable.hpe.unbelievable.hpe.ilo_smartstorage_raids - Module to manage SmartStorage raid configuration
+- unbelievable.hpe.ilo_boot_order - Manage boot order
+- unbelievable.hpe.ilo_power_state - Manage server power state via iLO
+- unbelievable.hpe.ilo_smartstorage_raids - Create/configure/delete smartstorage raids
 
 v2.0.0
 ======

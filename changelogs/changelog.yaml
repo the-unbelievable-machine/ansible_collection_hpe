@@ -85,13 +85,21 @@ releases:
     - module-ilo_smartstorage_raids.yml
     - release-summary.yml
     modules:
-    - description: Module to manage the boot order
+    - description: Manage boot order
       name: ilo_boot_order
-      namespace: unbelievable.hpe
-    - description: Module to manage server power state via iLO.
+      namespace: ''
+    - description: Manage server power state via iLO
       name: ilo_power_state
-      namespace: unbelievable.hpe
-    - description: Module to manage SmartStorage raid configuration
+      namespace: ''
+    - description: Create/configure/delete smartstorage raids
       name: ilo_smartstorage_raids
-      namespace: unbelievable.hpe
+      namespace: ''
     release_date: '2022-03-18'
+  2.1.1:
+    changes:
+      release_summary: 'Bugfix release
+
+        '
+    fragments:
+    - release-summary.yml
+    release_date: '2022-03-21'
