@@ -95,8 +95,9 @@ from ansible_collections.unbelievable.hpe.plugins.module_utils.oneview import On
 
 
 class OneViewRacksInfo(OneviewModuleBase):
-    def additional_argument_spec(self):
-        return dict(
+    def argument_spec(self):
+
+        additional_spec = dict(
             rack_entry_fields=dict(
                 type="list",
                 required=False,
@@ -133,6 +134,10 @@ class OneViewRacksInfo(OneviewModuleBase):
                 ],
             ),
         )
+        spec = dict()
+        spec.update(super(OneViewRacksInfo, self).argument_spec())
+        spec.update(additional_spec)
+        return spec
 
     def init(self):
         self.rack_entry_fields = self.module.params.get("rack_entry_fields")

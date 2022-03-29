@@ -109,12 +109,12 @@ EXAMPLES = r"""
 """
 
 
-from ansible_collections.unbelievable.hpe.plugins.module_utils.redfish_api_client import RedfishModuleBase  # type: ignore # noqa: E501
+from ansible_collections.unbelievable.hpe.plugins.module_utils.redfish import RedfishModuleBase  # type: ignore
 
 
 class IloSmartStorageRaids(RedfishModuleBase):
-    def additional_argument_spec(self):
-        return dict(
+    def argument_spec(self):
+        additional_spec = dict(
             raids=dict(
                 type="list",
                 required=True,
@@ -140,6 +140,11 @@ class IloSmartStorageRaids(RedfishModuleBase):
             ignore_raid_names=dict(type="bool", required=False, default=False),
             controller=dict(type="int", required=False, default=0),
         )
+        spec = dict()
+        spec.update(super(IloSmartStorageRaids, self).argument_spec())
+
+        spec.update(additional_spec)
+        return spec
 
     def run(self):
 

@@ -1,0 +1,6 @@
+---
+release_summary: |
+  Breaking changes:
+
+  - Parameter alias oneview_url removed from oneview_* modules.
+  - Parameter alias ilo_url removed from ilo_* modules.

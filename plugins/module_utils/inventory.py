@@ -30,7 +30,7 @@ class Inventory(object):
 
 class InventoryPluginInventory(Inventory):
     def __init__(self, plugin):
-        super().__init__()
+        super(InventoryPluginInventory, self).__init__()
         self.plugin = plugin
 
     def add_group(self, group):
@@ -48,6 +48,7 @@ class InventoryPluginInventory(Inventory):
 
 class DictInventory(Inventory):
     def __init__(self):
+        super(DictInventory, self).__init__()
         self.d = dict(hosts={}, groups={})
 
     def add_group(self, group):

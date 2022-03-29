@@ -6,3 +6,4 @@ flake8
 black
 flask
 pytest
+requests[socks]>=1.1

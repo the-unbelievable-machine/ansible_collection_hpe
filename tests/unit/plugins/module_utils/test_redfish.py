@@ -8,8 +8,9 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import pytest
+import unittest
 
-from ansible_collections.unbelievable.hpe.plugins.module_utils.redfish_api_client import RedfishModuleBase  # type: ignore # noqa: E501
+from ansible_collections.unbelievable.hpe.plugins.module_utils.redfish import RedfishApiClient, ApiHelper  # type: ignore # noqa: E501
 
 
 @pytest.mark.parametrize(
@@ -23,7 +24,7 @@ from ansible_collections.unbelievable.hpe.plugins.module_utils.redfish_api_clien
     ],
 )
 def test_setdefault_recursive(path, d, value, d_after):
-    val = RedfishModuleBase.setdefault_recursive(path, d)
+    val = ApiHelper.setdefault_recursive(path, d)
     assert val == value
     assert d == d_after
 
@@ -38,5 +39,15 @@ def test_setdefault_recursive(path, d, value, d_after):
     ],
 )
 def test_get_recursive(path, d, value):
-    val = RedfishModuleBase.get_recursive(path, d)
+    val = ApiHelper.get_recursive(path, d)
     assert val == value
+
+
+class TestRedfishApiClient(unittest.TestCase):
+    def setUp(self):
+        self.api_client = RedfishApiClient(
+            "http", "host.domain", 443, username="user", password="password", proxy="proxy"
+        )
+
+    def test_api_base(self):
+        self.assertEqual("/redfish/v1", self.api_client.api_base)

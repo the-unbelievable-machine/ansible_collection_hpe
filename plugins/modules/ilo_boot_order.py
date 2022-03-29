@@ -57,32 +57,44 @@ BootSources:
     elements: dict
 """
 
-from ansible_collections.unbelievable.hpe.plugins.module_utils.redfish_api_client import RedfishModuleBase  # type: ignore # noqa: E501
+from ansible_collections.unbelievable.hpe.plugins.module_utils.redfish import RedfishModuleBase  # type: ignore
 import re
 
 
 class ILOBootOrder(RedfishModuleBase):
-    def additional_argument_spec(self):
-        return dict(
+
+    CURRENT_SETTINGS_ENDPOINT = "Systems/1/Bios/boot"
+    PENDING_SETTINGS_ENDPOINT = "Systems/1/Bios/boot/settings"
+
+    def argument_spec(self):
+        additional_spec = dict(
             patterns=dict(
                 type="list",
                 elements="str",
                 required=True,
-            ),
+            )
         )
+        spec = dict()
+        spec.update(super(ILOBootOrder, self).argument_spec())
+        spec.update(additional_spec)
+        return spec
 
     def run(self):
 
         before = dict()
         after = dict()
 
-        current_settings = self.api_client.get_request("Systems/1/Bios/boot")
+        current_settings = self.api_client.get_request(ILOBootOrder.CURRENT_SETTINGS_ENDPOINT)
         current_order = current_settings.get("PersistentBootConfigOrder", [])
-        current_pending_order = self.api_client.get_request("Systems/1/Bios/boot/settings").get(
+        current_pending_order = self.api_client.get_request(ILOBootOrder.PENDING_SETTINGS_ENDPOINT).get(
             "PersistentBootConfigOrder", []
         )
         before["order"] = current_pending_order
-        new_order = self.compute_new_order(current_settings)
+        boot_sources = current_settings["BootSources"]
+        boot_sources = list(boot_sources)
+        self.result["available_boot_sources"] = list(boot_sources)
+        new_order = ILOBootOrder.compute_new_order(boot_sources, self.module.params.get("patterns"))
+        self.result["unmatched_boot_sources"] = list(boot_sources)
         after["order"] = new_order
 
         self.set_changes(before, after)
@@ -90,14 +102,12 @@ class ILOBootOrder(RedfishModuleBase):
 
         if not self.module.check_mode and current_pending_order != new_order:
             self.result["response"] = self.api_client.patch_request(
-                "Systems/1/Bios/boot/settings", {"PersistentBootConfigOrder": new_order}
+                ILOBootOrder.PENDING_SETTINGS_ENDPOINT, {"PersistentBootConfigOrder": new_order}
             )
 
-    def compute_new_order(self, settings):
+    @staticmethod
+    def compute_new_order(boot_sources, patterns):
         new_order = []
-        boot_sources = list(settings["BootSources"])
-        self.result["BootSources"] = boot_sources
-        patterns = self.module.params.get("patterns")
         if patterns:
             for p in patterns:
                 matcher = re.compile(p)

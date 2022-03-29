@@ -16,7 +16,7 @@ options:
             - The hostname or IP address of the iLO server
         type: str
         required: yes
-        aliases: [ name, ilo_server ]
+        aliases: [ name, host, server, ilo_host, ilo_server ]
         version_added: 1.0.0
     username:
         description:
