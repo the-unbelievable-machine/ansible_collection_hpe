@@ -65,15 +65,15 @@ EXAMPLES = r"""
 """
 
 
-from ansible_collections.unbelievable.hpe.plugins.module_utils.redfish_api_client import RedfishModuleBase  # type: ignore # noqa: E501
+from ansible_collections.unbelievable.hpe.plugins.module_utils.redfish import RedfishModuleBase, ApiHelper  # type: ignore # noqa: E501
 
 
 class ILOThermalSettings(RedfishModuleBase):
 
     ENDPOINT = "Chassis/1/Thermal"
 
-    def additional_argument_spec(self):
-        return dict(
+    def argument_spec(self):
+        additional_spec = dict(
             thermal_configuration=dict(
                 type="str",
                 choices=["OptimalCooling", "IncreasedCooling", "MaximumCooling", "EnhancedCooling"],
@@ -85,6 +85,10 @@ class ILOThermalSettings(RedfishModuleBase):
             ),
             wait_for_reset=dict(type="int", required=False, default=60),
         )
+        spec = dict()
+        spec.update(super(ILOThermalSettings, self).argument_spec())
+        spec.update(additional_spec)
+        return spec
 
     def module_def_extras(self):
         return dict(required_one_of=[["thermal_configuration", "fan_percent_minimum"]])
@@ -111,19 +115,19 @@ class ILOThermalSettings(RedfishModuleBase):
 
     def _thermal_configuration(self, current_data, patches, before, after):
         if self.module.params.get("thermal_configuration"):
-            current_val = self.get_recursive("Oem.Hpe.ThermalConfiguration", current_data)
+            current_val = ApiHelper.get_recursive("Oem.Hpe.ThermalConfiguration", current_data)
             new_val = self.module.params.get("thermal_configuration")
             if new_val != current_val:
                 self.result["patches"] = patches
                 before["ThermalConfiguration"] = current_val
                 after["ThermalConfiguration"] = new_val
-                self.setdefault_recursive("Oem.Hpe", patches)["ThermalConfiguration"] = new_val
+                ApiHelper.setdefault_recursive("Oem.Hpe", patches)["ThermalConfiguration"] = new_val
                 return True
         return False
 
     def _fan_percent_minimum(self, current_data, patches, before, after):
         if self.module.params.get("fan_percent_minimum"):
-            current_val = self.get_recursive("Oem.Hpe.FanPercentMinimum", current_data)
+            current_val = ApiHelper.get_recursive("Oem.Hpe.FanPercentMinimum", current_data)
             new_val = self.module.params.get("fan_percent_minimum")
             if not 0 <= new_val <= 100:
                 self.module.fail_json(
@@ -133,7 +137,7 @@ class ILOThermalSettings(RedfishModuleBase):
                 self.result["patches"] = patches
                 before["FanPercentMinimum"] = current_val
                 after["FanPercentMinimum"] = new_val
-                self.setdefault_recursive("Oem.Hpe", patches)["FanPercentMinimum"] = new_val
+                ApiHelper.setdefault_recursive("Oem.Hpe", patches)["FanPercentMinimum"] = new_val
                 return True
         return False
 

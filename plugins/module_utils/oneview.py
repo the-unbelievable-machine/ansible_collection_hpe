@@ -8,17 +8,18 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-from ansible_collections.unbelievable.hpe.plugins.module_utils.logger import SilentLogger, ModuleLogger  # type: ignore
+from ansible_collections.unbelievable.hpe.plugins.module_utils.logger import SilentLogger  # type: ignore
 from ansible_collections.unbelievable.hpe.plugins.module_utils.api_client import (  # type: ignore
     JsonRestApiClient,
-    HAS_REQUESTS,
-    REQUESTS_IMP_ERR,
+    ModuleBase,
 )
-from ansible.module_utils.basic import AnsibleModule, missing_required_lib
+
 from ansible.module_utils.six.moves.urllib.parse import urlencode  # type: ignore
 
 
 class OneViewApiClient(JsonRestApiClient):
+    API_BASE = "/rest"
+
     def __init__(
         self,
         protocol,
@@ -35,149 +36,83 @@ class OneViewApiClient(JsonRestApiClient):
             protocol=protocol,
             host=host,
             port=port,
+            api_base=OneViewApiClient.API_BASE,
             username=username,
             password=password,
             validate_certs=validate_certs,
             proxy=proxy,
+            logger=logger,
         )
 
         self.api_version = api_version
-        self.logger = logger
         self.session = None
 
     def get_headers(self):
-        headers = {"X-API-Version": str(self.api_version)}
+        headers = dict(JsonRestApiClient.get_headers(self))
+        headers["X-API-Version"] = str(self.api_version)
         if self.session:
             headers["Auth"] = self.session
         return headers
 
     def login(self):
-        endpoint = "/rest/login-sessions"
         payload = {"userName": self.username, "password": self.password, "loginMsgAck": "true"}
-        json = self.post_request(endpoint, payload)
+        json = self.post_request("/login-sessions", payload)
         self.session = json.get("sessionID")
         self.logger.debug("OneViewApiClient: Login successful")
 
     def logout(self):
         if self.session:
-            endpoint = "/rest/login-sessions"
-            self.delete_request(endpoint)
+            self.delete_request("/login-sessions")
             self.session = None
             self.logger.debug("OneViewApiClient: Logout successful")
 
     def list_server_hardware(self, filter=None):
-        next_url = "/rest/server-hardware"
+        next_url = "/server-hardware"
         if filter:
             next_url += "?filter=" + urlencode(filter)
-        server = []
-        while True:
-            self.logger.debug("OneViewApiClient: {0}".format(next_url))
-            data = self.get_request(next_url)
-            if data["members"]:
-                server += data["members"]
-                next_url = data.get("nextPageUri", "")
-                if not next_url:
-                    break
-            else:
-                break
-        return server
+        return self._collect_members(next_url)
 
     def list_racks(self):
-        next_url = "/rest/racks"
-        racks = []
+        return self._collect_members("/racks")
+
+    def _collect_members(self, url):
+        next_url = url
+        members = []
         while True:
             self.logger.debug("OneViewApiClient: {0}".format(next_url))
             data = self.get_request(next_url)
             if data["members"]:
-                racks += data["members"]
+                members += data["members"]
                 next_url = data.get("nextPageUri", "")
                 if not next_url:
                     break
             else:
                 break
-        return racks
+        return members
 
 
-class OneviewModuleBase(object):
-    def main(self):
-        # define available arguments/parameters a user can pass to the module
-        argument_spec = OneviewModuleBase.argument_spec()
-        argument_spec.update(self.additional_argument_spec())
+class OneviewModuleBase(ModuleBase):
+    def __init__(self):
+        super(OneviewModuleBase, self).__init__(param_alias_prefix="oneview")
 
-        self.module = AnsibleModule(
-            argument_spec=argument_spec, supports_check_mode=self.supports_check_mode(), **self.module_def_extras()
-        )
+    def argument_spec(self):
+        additional_spec = dict(api_version=dict(type="int", default=2400, aliases=["oneview_api_version"]))
+        spec = dict()
+        spec.update(super(OneviewModuleBase, self).argument_spec())
+        spec.update(additional_spec)
+        return spec
 
-        if not HAS_REQUESTS:
-            self.module.fail_json(msg=missing_required_lib("requests"), exception=REQUESTS_IMP_ERR)
-
-        try:
-            self.api_client = self.get_api_client()
-            self.result = dict(
-                changed=False,
-                diff=None,
-            )
-
-            self.init()
-            self.run()
-            self.module.exit_json(**self.result)
-        except BaseException as e:
-            self.module.fail_json(e)
-
-    def supports_check_mode(self):
-        return True
-
-    def additional_argument_spec(self):
-        """Overwrite this to provide additional module argument specs"""
-        return dict()
-
-    def module_def_extras(self):
-        return dict()
-
-    def init(self):
-        """Overwrite this to init your module"""
-        pass
-
-    def run(self):
-        """Overwrite this to implement the module action"""
-        pass
-
-    def get_api_client(self):
+    def get_module_api_client(self, protocol, host, port, username, password, validate_certs, proxy, logger):
         return OneViewApiClient(
-            protocol=self.module.params.get("protocol"),
-            host=self.module.params.get("hostname"),
-            port=self.module.params.get("port"),
-            username=self.module.params.get("username"),
-            password=self.module.params.get("password"),
-            validate_certs=self.module.params.get("validate_certs"),
+            protocol=protocol,
+            host=host,
+            port=port,
+            username=username,
+            password=password,
+            validate_certs=validate_certs,
             api_version=self.module.params.get("api_version"),
-            proxy=self.module.params.get("proxy") if "proxy" in self.module.params else None,
-            logger=ModuleLogger(self.module),
-        )
-
-    def set_changed(self, changed):
-        self.result["changed"] = changed
-
-    def set_changes(self, before=None, after=None):
-        self.result["diff"] = {"before": before, "after": after}
-        self.set_changed(before != after)
-
-    def set_message(self, message):
-        self.result["message"] = message
-
-    @staticmethod
-    def argument_spec():
-        return dict(
-            protocol=dict(
-                type="str", choices=["http", "https"], required=False, default="https", aliases=["oneview_protocol"]
-            ),
-            hostname=dict(type="str", required=True, aliases=["host", "url", "oneview_url"]),
-            port=dict(type="int", default=443, aliases=["oneview_port"]),
-            username=dict(type="str", required=True, aliases=["user", "oneview_user"]),
-            password=dict(type="str", required=True, aliases=["passwd", "oneview_password"], no_log=True),
-            validate_certs=dict(type="bool", required=False, default=True),
-            api_version=dict(type="int", default=2400, aliases=["oneview_api_version"]),
-            proxy=dict(type="str", required=False),
+            proxy=proxy,
+            logger=logger,
         )
 
 

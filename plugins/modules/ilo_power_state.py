@@ -42,12 +42,13 @@ EXAMPLES = r"""
 """
 
 
-from ansible_collections.unbelievable.hpe.plugins.module_utils.redfish_api_client import RedfishModuleBase  # type: ignore # noqa: E501
+from ansible_collections.unbelievable.hpe.plugins.module_utils.redfish import RedfishModuleBase  # type: ignore
 
 
 class ILOPowerState(RedfishModuleBase):
-    def additional_argument_spec(self):
-        return dict(
+    def argument_spec(self):
+
+        additional_spec = dict(
             action=dict(
                 type="str",
                 choices=[
@@ -61,6 +62,10 @@ class ILOPowerState(RedfishModuleBase):
                 required=True,
             ),
         )
+        spec = dict()
+        spec.update(super(ILOPowerState, self).argument_spec())
+        spec.update(additional_spec)
+        return spec
 
     def run(self):
 
@@ -73,20 +78,21 @@ class ILOPowerState(RedfishModuleBase):
         after["state"] = action
         self.set_changes(before, after)
 
-        change_required = self.change_required(current_state, action)
+        change_required = ILOPowerState.change_required(current_state, action)
         self.set_changed(change_required)
 
         if not self.module.check_mode and change_required:
             self.api_client.post_request("Systems/1/Actions/ComputerSystem.Reset", {"ResetType": action})
 
-    def change_required(self, current_state, action):
+    @staticmethod
+    def change_required(current_state, action):
         change = False
         if current_state == "Off":
             change = action in ["On", "ForceRestart", "PushPowerButton", "GracefulRestart"]
         elif current_state == "On":
             change = action in ["ForceOff", "ForceRestart", "PushPowerButton", "GracefulRestart", "GracefulShutdown"]
         else:
-            self.module.fail_json(msg="Unexpected state: {0}".format(current_state))
+            raise ValueError("Unexpected state: {0}".format(current_state))
         return change
 
     def get_current_power_state(self):

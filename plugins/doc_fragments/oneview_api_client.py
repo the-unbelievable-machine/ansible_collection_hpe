@@ -25,7 +25,7 @@ options:
             - The hostname or IP address of the OneView server
         type: str
         required: yes
-        aliases: [ host, url, oneview_url ]
+        aliases: [ name, host, server, oneview_host, oneview_server ]
         version_added: 2.0.0
     port:
         description:

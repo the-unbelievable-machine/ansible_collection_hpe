@@ -126,13 +126,17 @@ class OneViewInventory(OneviewModuleBase):
             for host in self.result["inventory"]["hosts"].values():
                 host.setdefault("vars", dict()).update(add_vars)
 
-    def additional_argument_spec(self):
-        return dict(
+    def argument_spec(self):
+        additional_spec = dict(
             preferred_ip=dict(type="str", choices=["IPv4", "IPv6"], required=False, default="IPv4"),
             hostname_short=dict(type="bool", required=False, default=True),
             add_domain=dict(type="str", required=False),
             add_vars=dict(type="dict", required=False),
         )
+        spec = dict()
+        spec.update(super(OneViewInventory, self).argument_spec())
+        spec.update(additional_spec)
+        return spec
 
 
 def main():

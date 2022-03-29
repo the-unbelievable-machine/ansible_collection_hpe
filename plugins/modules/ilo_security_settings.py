@@ -44,17 +44,21 @@ EXAMPLES = r"""
 """
 
 
-from ansible_collections.unbelievable.hpe.plugins.module_utils.redfish_api_client import RedfishModuleBase  # type: ignore # noqa: E501
+from ansible_collections.unbelievable.hpe.plugins.module_utils.redfish import RedfishModuleBase  # type: ignore
 
 
 class ILOSecuritySettings(RedfishModuleBase):
 
     ENDPOINT = "Managers/1/SecurityService"
 
-    def additional_argument_spec(self):
-        return dict(
+    def argument_spec(self):
+        additional_spec = dict(
             security_state=dict(type="str", choices=["Production", "HighSecurity"], required=True),
         )
+        spec = dict()
+        spec.update(super(ILOSecuritySettings, self).argument_spec())
+        spec.update(additional_spec)
+        return spec
 
     def run(self):
 

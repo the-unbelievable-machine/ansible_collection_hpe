@@ -81,8 +81,8 @@ from ansible_collections.unbelievable.hpe.plugins.module_utils.oneview import On
 
 
 class OneViewServerHardwareInfo(OneviewModuleBase):
-    def additional_argument_spec(self):
-        return dict(
+    def argument_spec(self):
+        additional_spec = dict(
             hwinfo_entry_fields=dict(
                 type="list",
                 required=False,
@@ -108,6 +108,10 @@ class OneViewServerHardwareInfo(OneviewModuleBase):
             ),
             rack_info=dict(type="bool", required=False, default=True),
         )
+        spec = dict()
+        spec.update(super(OneViewServerHardwareInfo, self).argument_spec())
+        spec.update(additional_spec)
+        return spec
 
     def init(self):
         self.rack_info = self.module.params.get("rack_info")
