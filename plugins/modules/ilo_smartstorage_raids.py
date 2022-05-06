@@ -151,7 +151,8 @@ class IloSmartStorageRaids(RedfishModuleBase):
         before = dict()
         after = dict()
 
-        before["raids"] = self.get_current_raids()
+        config_api_endpoint = self.get_config_endpoint(self.module.params.get("controller"))
+        before["raids"] = self.get_current_raids(config_api_endpoint)
         self.result["disks"] = self.get_disks(self.module.params.get("controller"))
 
         build_raids = self.create_logical_drives_definitions(self.module.params.get("raids"), self.result["disks"])
@@ -161,7 +162,7 @@ class IloSmartStorageRaids(RedfishModuleBase):
             if before != after:
                 request_data = {"DataGuard": "Disabled", "LogicalDrives": build_raids}
                 self.result["response"] = self.api_client.put_request(
-                    "Systems/1/smartstorageconfig/settings/", data=request_data
+                    config_api_endpoint + "settings/", data=request_data
                 )
 
         self.set_changes(before, after)
@@ -182,9 +183,20 @@ class IloSmartStorageRaids(RedfishModuleBase):
             disk[key] = disk_info[key]
         return disk
 
-    def get_current_raids(self):
+    def get_config_endpoint(self, controller):
+        sysinfo = self.api_client.get_request("Systems/1/")
+        slot = "Slot {0}".format(controller)
+        endpoint = None
+        for s_config_endpoint in [x["@odata.id"] for x in sysinfo["Oem"]["Hpe"]["SmartStorageConfig"]]:
+            s_config = self.api_client.get_request(s_config_endpoint)
+            if s_config["Location"] == slot:
+                endpoint = s_config_endpoint
+                break
+        return endpoint
+
+    def get_current_raids(self, endpoint):
         current_raids = []
-        config = self.api_client.get_request("Systems/1/smartstorageconfig")
+        config = self.api_client.get_request(endpoint)
         for ldrive in config.get("LogicalDrives", []):
             raid = {}
             if not self.module.params.get("ignore_raid_names"):
