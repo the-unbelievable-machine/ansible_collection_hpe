@@ -1,0 +1,4 @@
+---
+breaking_changes:
+  - "Modules ilo_*: removed parameter alias ilo_url"
+  - "Modules oneview_*: removed parameter alias oneview_url"

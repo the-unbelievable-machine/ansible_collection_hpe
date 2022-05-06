@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - "Module ilo_smartstorage_raids: correct smartstorage config selected if multiple array controllers are present."
