@@ -71,7 +71,7 @@ Parameters
                 </td>
                 <td>
                         <div>The hostname or IP address of the iLO server</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: name, ilo_server</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: name, host, server, ilo_host, ilo_server</div>
                 </td>
             </tr>
             <tr>

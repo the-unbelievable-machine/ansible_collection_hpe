@@ -99,7 +99,7 @@ Parameters
                 </td>
                 <td>
                         <div>The hostname or IP address of the OneView server</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: host, url, oneview_url</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: name, host, server, oneview_host, oneview_server</div>
                 </td>
             </tr>
             <tr>
