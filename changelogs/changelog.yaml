@@ -103,3 +103,20 @@ releases:
     fragments:
     - release-summary.yml
     release_date: '2022-03-21'
+  3.0.0:
+    changes:
+      breaking_changes:
+      - 'Modules ilo_*: removed parameter alias ilo_url'
+      - 'Modules oneview_*: removed parameter alias oneview_url'
+      bugfixes:
+      - 'Module ilo_smartstorage_raids: correct smartstorage config selected if multiple
+        array controllers are present.'
+      release_summary: 'Marjor release due to removal of some parameter aliases (see
+        breaking changes)
+
+        '
+    fragments:
+    - breaking_changes.yml
+    - bugfixes.yml
+    - release-summary.yml
+    release_date: '2022-05-09'

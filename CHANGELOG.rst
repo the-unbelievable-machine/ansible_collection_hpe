@@ -5,6 +5,26 @@ unbelievable.hpe Release Notes
 .. contents:: Topics
 
 
+v3.0.0
+======
+
+Release Summary
+---------------
+
+Marjor release due to removal of some parameter aliases (see breaking changes)
+
+
+Breaking Changes / Porting Guide
+--------------------------------
+
+- Modules ilo_*: removed parameter alias ilo_url
+- Modules oneview_*: removed parameter alias oneview_url
+
+Bugfixes
+--------
+
+- Module ilo_smartstorage_raids: correct smartstorage config selected if multiple array controllers are present.
+
 v2.1.1
 ======
 

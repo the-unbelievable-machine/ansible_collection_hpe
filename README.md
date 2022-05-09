@@ -64,19 +64,19 @@ Click on the name of a plugin or module to view that content's documentation:
 ### Inventory plugins
 Name | Description
 --- | ---
-[unbelievable.hpe.oneview](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v2.1.1/docs/unbelievable.hpe.oneview_inventory.rst)|HPE OneView inventory source
+[unbelievable.hpe.oneview](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v3.0.0/docs/unbelievable.hpe.oneview_inventory.rst)|HPE OneView inventory source
 
 ### Modules
 Name | Description
 --- | ---
-[unbelievable.hpe.ilo_boot_order](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v2.1.1/docs/unbelievable.hpe.ilo_boot_order_module.rst)|Manage boot order
-[unbelievable.hpe.ilo_power_state](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v2.1.1/docs/unbelievable.hpe.ilo_power_state_module.rst)|Manage server power state via iLO
-[unbelievable.hpe.ilo_security_settings](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v2.1.1/docs/unbelievable.hpe.ilo_security_settings_module.rst)|Manage iLO Security settings
-[unbelievable.hpe.ilo_smartstorage_raids](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v2.1.1/docs/unbelievable.hpe.ilo_smartstorage_raids_module.rst)|Create/configure/delete smartstorage raids
-[unbelievable.hpe.ilo_thermal_settings](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v2.1.1/docs/unbelievable.hpe.ilo_thermal_settings_module.rst)|Manage iLO Thermal settings
-[unbelievable.hpe.oneview_inventory](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v2.1.1/docs/unbelievable.hpe.oneview_inventory_module.rst)|Generates the same information as the oneview_inventory plugin.
-[unbelievable.hpe.oneview_racks_info](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v2.1.1/docs/unbelievable.hpe.oneview_racks_info_module.rst)|Content of /rest/racks endpoint of OneView
-[unbelievable.hpe.oneview_server_hardware_info](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v2.1.1/docs/unbelievable.hpe.oneview_server_hardware_info_module.rst)|Content of /rest/server-hardware endpoint of OneView
+[unbelievable.hpe.ilo_boot_order](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v3.0.0/docs/unbelievable.hpe.ilo_boot_order_module.rst)|Manage boot order
+[unbelievable.hpe.ilo_power_state](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v3.0.0/docs/unbelievable.hpe.ilo_power_state_module.rst)|Manage server power state via iLO
+[unbelievable.hpe.ilo_security_settings](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v3.0.0/docs/unbelievable.hpe.ilo_security_settings_module.rst)|Manage iLO Security settings
+[unbelievable.hpe.ilo_smartstorage_raids](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v3.0.0/docs/unbelievable.hpe.ilo_smartstorage_raids_module.rst)|Create/configure/delete smartstorage raids
+[unbelievable.hpe.ilo_thermal_settings](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v3.0.0/docs/unbelievable.hpe.ilo_thermal_settings_module.rst)|Manage iLO Thermal settings
+[unbelievable.hpe.oneview_inventory](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v3.0.0/docs/unbelievable.hpe.oneview_inventory_module.rst)|Generates the same information as the oneview_inventory plugin.
+[unbelievable.hpe.oneview_racks_info](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v3.0.0/docs/unbelievable.hpe.oneview_racks_info_module.rst)|Content of /rest/racks endpoint of OneView
+[unbelievable.hpe.oneview_server_hardware_info](https://github.com/the-unbelievable-machine/ansible_collection_hpe/blob/v3.0.0/docs/unbelievable.hpe.oneview_server_hardware_info_module.rst)|Content of /rest/server-hardware endpoint of OneView
 
 <!--end collection content-->
 <!-- markdownlint-enable -->
