@@ -5,6 +5,15 @@ unbelievable.hpe Release Notes
 .. contents:: Topics
 
 
+v3.1.0
+======
+
+Release Summary
+---------------
+
+Module ilo_security_settings: support for parameter wait_for_reset added.
+
+
 v3.0.0
 ======
 
