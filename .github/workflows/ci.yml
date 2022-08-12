@@ -105,7 +105,7 @@ jobs:
           - stable-2.10
           - stable-2.11
           - stable-2.12
-          - devel
+         # - devel
     steps:
       - name: Initialize env vars
         uses: briantist/ezenv@v1
