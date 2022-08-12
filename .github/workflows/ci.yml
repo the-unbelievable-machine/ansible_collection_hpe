@@ -31,7 +31,7 @@ jobs:
           - stable-2.10
           - stable-2.11
           - stable-2.12
-          - devel
+          #- devel
     steps:
       # ansible-test requires the collection to be in a directory in the form
       # .../ansible_collections/${{env.NAMESPACE}}/${{env.COLLECTION_NAME}}/
