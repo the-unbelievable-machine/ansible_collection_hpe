@@ -120,3 +120,12 @@ releases:
     - bugfixes.yml
     - release-summary.yml
     release_date: '2022-05-09'
+  3.1.0:
+    changes:
+      release_summary: 'Module ilo_security_settings: support for parameter wait_for_reset
+        added.
+
+        '
+    fragments:
+    - release-summary.yml
+    release_date: '2022-08-12'

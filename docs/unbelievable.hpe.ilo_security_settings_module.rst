@@ -185,6 +185,23 @@ Parameters
                         <div>Verify SSL certificate if using HTTPS.</div>
                 </td>
             </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>wait_for_reset</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">integer</span>
+                    </div>
+                </td>
+                <td>
+                        <b>Default:</b><br/><div style="color: blue">60</div>
+                </td>
+                <td>
+                        <div>Max seconds to wait for iLO reset to be completed.</div>
+                        <div>0 not wait at all.</div>
+                </td>
+            </tr>
     </table>
     <br/>
 
