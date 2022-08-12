@@ -1,0 +1,3 @@
+---
+release_summary: |
+    Module ilo_security_settings: support for parameter wait_for_reset added.
