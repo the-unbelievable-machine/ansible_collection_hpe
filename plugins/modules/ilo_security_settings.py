@@ -28,6 +28,13 @@ options:
         choices: [ Production, HighSecurity ]
         required: yes
         version_added: 1.0.0
+    wait_for_reset:
+        description:
+            - Max seconds to wait for iLO reset to be completed.
+            - 0 not wait at all.
+        type: int
+        required: no
+        default: 60
 
 extends_documentation_fragment:
     - unbelievable.hpe.redfish_api_client
@@ -54,6 +61,7 @@ class ILOSecuritySettings(RedfishModuleBase):
     def argument_spec(self):
         additional_spec = dict(
             security_state=dict(type="str", choices=["Production", "HighSecurity"], required=True),
+            wait_for_reset=dict(type="int", required=False, default=60),
         )
         spec = dict()
         spec.update(super(ILOSecuritySettings, self).argument_spec())
@@ -72,6 +80,9 @@ class ILOSecuritySettings(RedfishModuleBase):
         if not self.module.check_mode:
             if patches:
                 self.api_client.patch_request(ILOSecuritySettings.ENDPOINT, data=patches)
+                if self.module.params.get("wait_for_reset") > 0:
+                    self.set_changes(before, after)
+                    self.wait_for_ilo_reset(self.module.params.get("wait_for_reset"))
 
         self.set_changes(before, after)
 
