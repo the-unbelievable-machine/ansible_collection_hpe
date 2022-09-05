@@ -51,7 +51,13 @@ options:
         description: Enrich entries with rack_name and position in rack.
         type: bool
         default: yes
-        version_added: 2.0.0
+        version_added: 3.2.0
+    filter:
+        description:
+            - OneView rest-api filter
+            - see https://techlibrary.hpe.com/docs/enterprise/servers/oneview6.0/cicf-api/en/index.html#stdparams
+        required: no
+        type: str
 
 extends_documentation_fragment:
     - unbelievable.hpe.oneview_api_client
@@ -107,6 +113,7 @@ class OneViewServerHardwareInfo(OneviewModuleBase):
                 ],
             ),
             rack_info=dict(type="bool", required=False, default=True),
+            filter=dict(type="str", required=False),
         )
         spec = dict()
         spec.update(super(OneViewServerHardwareInfo, self).argument_spec())

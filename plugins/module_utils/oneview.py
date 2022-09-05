@@ -14,8 +14,6 @@ from ansible_collections.unbelievable.hpe.plugins.module_utils.api_client import
     ModuleBase,
 )
 
-from ansible.module_utils.six.moves.urllib.parse import urlencode  # type: ignore
-
 
 class OneViewApiClient(JsonRestApiClient):
     API_BASE = "/rest"
@@ -69,7 +67,7 @@ class OneViewApiClient(JsonRestApiClient):
     def list_server_hardware(self, filter=None):
         next_url = "/server-hardware"
         if filter:
-            next_url += "?filter=" + urlencode(filter)
+            next_url += '?filter="' + filter + '"'
         return self._collect_members(next_url)
 
     def list_racks(self):
