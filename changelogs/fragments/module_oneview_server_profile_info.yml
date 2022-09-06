@@ -1,0 +1,5 @@
+---
+add plugin.module:
+  - name: oneview_server_profile_info
+    namespace: unbelievable.hpe
+    description: Module to list server profiles.

@@ -70,6 +70,12 @@ class OneViewApiClient(JsonRestApiClient):
             next_url += '?filter="' + filter + '"'
         return self._collect_members(next_url)
 
+    def list_server_profiles(self, filter=None):
+        next_url = "/server-profiles"
+        if filter:
+            next_url += '?filter="' + filter + '"'
+        return self._collect_members(next_url)
+
     def list_racks(self):
         return self._collect_members("/racks")
 
@@ -132,6 +138,13 @@ class ApiHelper(object):
                 result[entry] = val
         return result
 
+    @staticmethod
+    def copy_path(src, path):
+        v = src
+        for s in filter(None, path.split("/")):
+            v = v[s]
+        return v
+
     class Host(object):
         @staticmethod
         def mpHostName(host):
@@ -162,6 +175,13 @@ class ApiHelper(object):
                 elif "mpIpAddress" in host and identifier in host.get("mpIpAddress", ""):
                     address = host.get("mpIpAddress", None)
             return address
+
+    class ServerProfile(object):
+        @staticmethod
+        def get_profile_uuid(server_profile):
+            if "profileUUID" in server_profile:
+                return server_profile["profileUUID"]
+            return server_profile["uri"].split("/")[-1]
 
 
 class OneViewInventoryBuilder(object):
