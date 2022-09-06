@@ -14,6 +14,8 @@ from ansible_collections.unbelievable.hpe.plugins.module_utils.api_client import
     ModuleBase,
 )
 
+import time
+
 
 class OneViewApiClient(JsonRestApiClient):
     API_BASE = "/rest"
@@ -75,6 +77,34 @@ class OneViewApiClient(JsonRestApiClient):
         if filter:
             next_url += '?filter="' + filter + '"'
         return self._collect_members(next_url)
+
+    def get_server_profile(self, id):
+        return self.get_request("/server-profiles/" + id)
+
+    def server_profile_update(self, profile_id):
+        payload = [{"op": "replace", "path": "/templateCompliance", "value": "Compliant"}]
+        return self.patch_request_with_headers("/server-profiles/" + profile_id, payload)
+
+    def get_server_profile_compliant_preview(self, profile_id):
+        return self.get_request("/server-profiles/{0}/compliance-preview".format(profile_id))
+
+    def wait_for_task(self, task_id, seconds_to_wait=30):
+        url = "tasks/" + task_id
+        end = time.time() + seconds_to_wait
+        data = None
+        while time.time() <= end:
+            data = self.get_request(url, timeout=5)
+            if data["taskState"] in [
+                "Cancelled",
+                "Cancelling",
+                "Completed",
+                "Error",
+                "Killed",
+                "Terminated",
+                "Unknown",
+            ]:
+                break
+        return data
 
     def list_racks(self):
         return self._collect_members("/racks")
@@ -182,6 +212,14 @@ class ApiHelper(object):
             if "profileUUID" in server_profile:
                 return server_profile["profileUUID"]
             return server_profile["uri"].split("/")[-1]
+
+        @staticmethod
+        def get_status(server_profile):
+            status = {}
+            status["refreshState"] = server_profile["refreshState"]
+            for k, v in ApiHelper.ServerProfile.components.items():
+                status[k] = ApiHelper.copy_path(server_profile, v)
+            return status
 
 
 class OneViewInventoryBuilder(object):

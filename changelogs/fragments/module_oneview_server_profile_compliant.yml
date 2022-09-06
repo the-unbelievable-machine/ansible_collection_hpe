@@ -1,0 +1,5 @@
+---
+add plugin.module:
+  - name: oneview_server_profile_compliant
+    namespace: unbelievable.hpe
+    description: Module to update a server profile from the server profile template.
