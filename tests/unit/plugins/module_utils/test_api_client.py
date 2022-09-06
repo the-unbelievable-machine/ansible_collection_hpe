@@ -15,6 +15,7 @@ from mock import MagicMock, patch
 
 
 from ansible_collections.unbelievable.hpe.plugins.module_utils.api_client import JsonRestApiClient  # type: ignore # noqa: E501
+from ansible_collections.unbelievable.hpe.plugins.module_utils.api_client import JsonRestApiResponse  # type: ignore # noqa: E501
 
 
 @pytest.mark.parametrize(
@@ -85,16 +86,19 @@ def test_cleanup_uri_path(api_base, uri_path, expected):
 def test__execute_request(verb):
     api_client = JsonRestApiClient("http", "host.domain", 443)
     api_client.cleanup_uri_path = MagicMock(return_value="mocked")
-    api_client.get_headers = MagicMock(return_value={"header": "headeer"})
+    api_client.get_headers = MagicMock(return_value={"header": "header"})
     api_client.get_auth = MagicMock(return_value={"user": "password"})
     api_client.validate_certs = "validate"
     payload = {"pay": "load"}
+    headers = {"key": "value", "Content-Type": "application/json"}
+    response = {"response": "data"}
+    expected = JsonRestApiResponse(headers, response)
 
     with patch("requests.request") as mock_request:
-        response = {"response": "data"}
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json = MagicMock(return_value=response)
+        mock_response.headers = headers
         mock_request.return_value = mock_response
         data = api_client._execute_request(verb, "", data=payload, timeout=123)
         mock_request.assert_called_once_with(
@@ -107,7 +111,8 @@ def test__execute_request(verb):
             timeout=123,
             proxies=api_client.get_proxies(),
         )
-        assert response == data
+        print(data)
+        assert expected == data
 
 
 class TestJsonRestApiClient(unittest.TestCase):
@@ -117,7 +122,8 @@ class TestJsonRestApiClient(unittest.TestCase):
         )
         self.payload = {"pay": "load"}
         self.response = {"response": "data"}
-        self.api_client._execute_request = MagicMock(return_value=self.response)
+        self.header = {"key": "value"}
+        self.api_client._execute_request = MagicMock(return_value=JsonRestApiResponse(self.header, self.response))
 
     def test_get_headers(self):
         self.assertEqual(

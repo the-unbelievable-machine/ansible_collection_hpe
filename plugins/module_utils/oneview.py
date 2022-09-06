@@ -14,7 +14,7 @@ from ansible_collections.unbelievable.hpe.plugins.module_utils.api_client import
     ModuleBase,
 )
 
-from ansible.module_utils.six.moves.urllib.parse import urlencode  # type: ignore
+import time
 
 
 class OneViewApiClient(JsonRestApiClient):
@@ -69,8 +69,42 @@ class OneViewApiClient(JsonRestApiClient):
     def list_server_hardware(self, filter=None):
         next_url = "/server-hardware"
         if filter:
-            next_url += "?filter=" + urlencode(filter)
+            next_url += '?filter="' + filter + '"'
         return self._collect_members(next_url)
+
+    def list_server_profiles(self, filter=None):
+        next_url = "/server-profiles"
+        if filter:
+            next_url += '?filter="' + filter + '"'
+        return self._collect_members(next_url)
+
+    def get_server_profile(self, id):
+        return self.get_request("/server-profiles/" + id)
+
+    def server_profile_update(self, profile_id):
+        payload = [{"op": "replace", "path": "/templateCompliance", "value": "Compliant"}]
+        return self.patch_request_with_headers("/server-profiles/" + profile_id, payload)
+
+    def get_server_profile_compliant_preview(self, profile_id):
+        return self.get_request("/server-profiles/{0}/compliance-preview".format(profile_id))
+
+    def wait_for_task(self, task_id, seconds_to_wait=30):
+        url = "tasks/" + task_id
+        end = time.time() + seconds_to_wait
+        data = None
+        while time.time() <= end:
+            data = self.get_request(url, timeout=5)
+            if data["taskState"] in [
+                "Cancelled",
+                "Cancelling",
+                "Completed",
+                "Error",
+                "Killed",
+                "Terminated",
+                "Unknown",
+            ]:
+                break
+        return data
 
     def list_racks(self):
         return self._collect_members("/racks")
@@ -134,6 +168,13 @@ class ApiHelper(object):
                 result[entry] = val
         return result
 
+    @staticmethod
+    def copy_path(src, path):
+        v = src
+        for s in filter(None, path.split("/")):
+            v = v[s]
+        return v
+
     class Host(object):
         @staticmethod
         def mpHostName(host):
@@ -164,6 +205,21 @@ class ApiHelper(object):
                 elif "mpIpAddress" in host and identifier in host.get("mpIpAddress", ""):
                     address = host.get("mpIpAddress", None)
             return address
+
+    class ServerProfile(object):
+        @staticmethod
+        def get_profile_uuid(server_profile):
+            if "profileUUID" in server_profile:
+                return server_profile["profileUUID"]
+            return server_profile["uri"].split("/")[-1]
+
+        @staticmethod
+        def get_status(server_profile):
+            status = {}
+            status["refreshState"] = server_profile["refreshState"]
+            for k, v in ApiHelper.ServerProfile.components.items():
+                status[k] = ApiHelper.copy_path(server_profile, v)
+            return status
 
 
 class OneViewInventoryBuilder(object):

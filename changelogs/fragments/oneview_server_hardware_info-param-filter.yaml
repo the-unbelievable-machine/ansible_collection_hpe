@@ -1,0 +1,2 @@
+minor_changes:
+  - Module oneview_server_hardware_info - add support for "filter" parameter

@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - Module oneview_server_hardware_info - Logout from OneView even if module fails.

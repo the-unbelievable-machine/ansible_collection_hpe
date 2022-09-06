@@ -51,7 +51,13 @@ options:
         description: Enrich entries with rack_name and position in rack.
         type: bool
         default: yes
-        version_added: 2.0.0
+        version_added: 3.2.0
+    filter:
+        description:
+            - OneView rest-api filter
+            - see https://techlibrary.hpe.com/docs/enterprise/servers/oneview6.0/cicf-api/en/index.html#stdparams
+        required: no
+        type: str
 
 extends_documentation_fragment:
     - unbelievable.hpe.oneview_api_client
@@ -107,6 +113,7 @@ class OneViewServerHardwareInfo(OneviewModuleBase):
                 ],
             ),
             rack_info=dict(type="bool", required=False, default=True),
+            filter=dict(type="str", required=False),
         )
         spec = dict()
         spec.update(super(OneViewServerHardwareInfo, self).argument_spec())
@@ -118,11 +125,13 @@ class OneViewServerHardwareInfo(OneviewModuleBase):
         self.hwinfo_entry_fields = self.module.params.get("hwinfo_entry_fields")
 
     def run(self):
-        self.api_client.login()
-        servers_raw = self.api_client.list_server_hardware()
-        servers = self._process_servers(servers_raw)
-        self.result["servers"] = servers if servers else []
-        self.api_client.logout()
+        try:
+            self.api_client.login()
+            servers_raw = self.api_client.list_server_hardware()
+            servers = self._process_servers(servers_raw)
+            self.result["servers"] = servers if servers else []
+        finally:
+            self.api_client.logout()
 
     def _process_servers(self, servers_raw):
         racksinfo = {}
