@@ -145,11 +145,13 @@ class OneViewRacksInfo(OneviewModuleBase):
         self.hwinfo_entry_fields = self.module.params.get("hwinfo_entry_fields")
 
     def run(self):
-        self.api_client.login()
-        racks_raw = self.api_client.list_racks()
-        racks = self._process_racks(racks_raw)
-        self.result["racks"] = racks if racks else []
-        self.api_client.logout()
+        try:
+            self.api_client.login()
+            racks_raw = self.api_client.list_racks()
+            racks = self._process_racks(racks_raw)
+            self.result["racks"] = racks if racks else []
+        finally:
+            self.api_client.logout()
 
     def _process_racks(self, racks_raw):
         # to satisfy ansible tests

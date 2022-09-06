@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - Module oneview_server_racks_info - Logout from OneView even if module fails.
