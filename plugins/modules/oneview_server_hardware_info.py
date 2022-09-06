@@ -125,11 +125,13 @@ class OneViewServerHardwareInfo(OneviewModuleBase):
         self.hwinfo_entry_fields = self.module.params.get("hwinfo_entry_fields")
 
     def run(self):
-        self.api_client.login()
-        servers_raw = self.api_client.list_server_hardware()
-        servers = self._process_servers(servers_raw)
-        self.result["servers"] = servers if servers else []
-        self.api_client.logout()
+        try:
+            self.api_client.login()
+            servers_raw = self.api_client.list_server_hardware()
+            servers = self._process_servers(servers_raw)
+            self.result["servers"] = servers if servers else []
+        finally:
+            self.api_client.logout()
 
     def _process_servers(self, servers_raw):
         racksinfo = {}
