@@ -8,6 +8,8 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 from traceback import format_exc
+from collections import namedtuple
+
 from ansible.module_utils.basic import AnsibleModule, missing_required_lib
 from ansible_collections.unbelievable.hpe.plugins.module_utils.logger import SilentLogger, ModuleLogger  # type: ignore
 
@@ -19,6 +21,8 @@ try:
 except ImportError:
     REQUESTS_IMP_ERR = format_exc()
     HAS_REQUESTS = False
+
+JsonRestApiResponse = namedtuple("JsonRestApiResponse", ["headers", "content"])
 
 
 class JsonRestApiClient(object):
@@ -68,21 +72,155 @@ class JsonRestApiClient(object):
         return self.proxies
 
     def get_request(self, uri_path, timeout=None):
-        return self._execute_request("GET", uri_path, data=None, timeout=timeout)
+        """Execute GET request
+
+        Args:
+            uri_path (str): uri relative to api_base
+            timeout (int, optional): request timeout in seconds. Defaults to None.
+
+        Returns:
+            json: api response
+        """
+        return self._execute_request("GET", uri_path, data=None, timeout=timeout).content
 
     def post_request(self, uri_path, data, timeout=None):
-        return self._execute_request("POST", uri_path, data=data, timeout=timeout)
+        """Execute POST request
+
+        Args:
+            uri_path (str): uri relative to api_base
+            data (json): payload
+            timeout (int, optional): request timeout in seconds. Defaults to None.
+
+        Returns:
+            json: api response
+        """
+        return self._execute_request("POST", uri_path, data=data, timeout=timeout).content
 
     def put_request(self, uri_path, data, timeout=None):
-        return self._execute_request("PUT", uri_path, data=data, timeout=timeout)
+        """Execute PUT request
+
+        Args:
+            uri_path (str): uri relative to api_base
+            data (json): payload
+            timeout (int, optional): request timeout in seconds. Defaults to None.
+
+        Returns:
+            json: api response
+        """
+        return self._execute_request("PUT", uri_path, data=data, timeout=timeout).content
 
     def delete_request(self, uri_path, data=None, timeout=None):
-        return self._execute_request("DELETE", uri_path, data=data, timeout=timeout)
+        """Execute DELETE request
+
+        Args:
+            uri_path (str): uri relative to api_base
+            data (json, optional): payload. Defaults to None.
+            timeout (int, optional): request timeout in seconds. Defaults to None.
+
+        Returns:
+            json: api response
+        """
+        return self._execute_request("DELETE", uri_path, data=data, timeout=timeout).content
 
     def head_request(self, uri_path, timeout=None):
+        """Execute HEAD request
+
+        Args:
+            uri_path (str): uri relative to api_base
+            timeout (int, optional): request timeout in seconds. Defaults to None.
+
+        Returns:
+            json: api response
+        """
+        return self._execute_request("HEAD", uri_path, data=None, timeout=timeout).content
+
+    def patch_request(self, uri_path, data, timeout=None):
+        """Execute PATCH request
+
+        Args:
+            uri_path (str): uri relative to api_base
+            data (json): payload.
+            timeout (int, optional): request timeout. Defaults to None.
+
+        Returns:
+            json: api response
+        """
+        return self._execute_request("PATCH", uri_path, data=data, timeout=timeout).content
+
+    def get_request_with_headers(self, uri_path, timeout=None):
+        """Execute GET request
+
+        Args:
+            uri_path (str): uri relative to api_base
+            timeout (int, optional): request timeout in seconds. Defaults to None.
+
+        Returns:
+            JsonRestApiResponse: api response
+        """
+        return self._execute_request("GET", uri_path, data=None, timeout=timeout)
+
+    def post_request_with_headers(self, uri_path, data, timeout=None):
+        """Execute POST request
+
+        Args:
+            uri_path (str): uri relative to api_base
+            data (json): payload
+            timeout (int, optional): request timeout in seconds. Defaults to None.
+
+        Returns:
+            JsonRestApiResponse: api response
+        """
+        return self._execute_request("POST", uri_path, data=data, timeout=timeout)
+
+    def put_request_with_headers(self, uri_path, data, timeout=None):
+        """Execute PUT request
+
+        Args:
+            uri_path (str): uri relative to api_base
+            data (json): payload
+            timeout (int, optional): request timeout in seconds. Defaults to None.
+
+        Returns:
+            JsonRestApiResponse: api response
+        """
+        return self._execute_request("PUT", uri_path, data=data, timeout=timeout)
+
+    def delete_request_with_headers(self, uri_path, data=None, timeout=None):
+        """Execute DELETE request
+
+        Args:
+            uri_path (str): uri relative to api_base
+            data (json, optional): payload. Defaults to None.
+            timeout (int, optional): request timeout in seconds. Defaults to None.
+
+        Returns:
+            JsonRestApiResponse: api response
+        """
+        return self._execute_request("DELETE", uri_path, data=data, timeout=timeout)
+
+    def head_request_with_headers(self, uri_path, timeout=None):
+        """Execute HEAD request
+
+        Args:
+            uri_path (str): uri relative to api_base
+            timeout (int, optional): request timeout in seconds. Defaults to None.
+
+        Returns:
+            JsonRestApiResponse: api response
+        """
         return self._execute_request("HEAD", uri_path, data=None, timeout=timeout)
 
-    def patch_request(self, uri_path, data=None, timeout=None):
+    def patch_request_with_headers(self, uri_path, data, timeout=None):
+        """Execute PATCH request
+
+        Args:
+            uri_path (str): uri relative to api_base
+            data (json): payload.
+            timeout (int, optional): request timeout. Defaults to None.
+
+        Returns:
+            JsonRestApiResponse: api response
+        """
         return self._execute_request("PATCH", uri_path, data=data, timeout=timeout)
 
     def cleanup_uri_path(self, uri_path):
@@ -107,11 +245,12 @@ class JsonRestApiClient(object):
             proxies=self.get_proxies(),
         )
         if r.ok:
+            content = None
             if r.headers.get("Content-Type", "").startswith("application/json"):
-                return r.json()
+                content = r.json()
             elif r.content:
                 self.logger.warn("no json response '{0}' from {1} request to {2}".format(r.content, verb, url))
-                return None
+            return JsonRestApiResponse(r.headers, content)
         else:
             self.logger.warn("response error {0} from {1} request to {2}".format(r.status_code, verb, url))
             r.raise_for_status()

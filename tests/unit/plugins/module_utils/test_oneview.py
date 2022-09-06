@@ -14,6 +14,7 @@ from mock import MagicMock, call
 
 
 from ansible_collections.unbelievable.hpe.plugins.module_utils.oneview import OneViewApiClient  # type: ignore # noqa: E501
+from ansible_collections.unbelievable.hpe.plugins.module_utils.api_client import JsonRestApiResponse  # type: ignore # noqa: E501
 
 
 class TestOneViewApiClient(unittest.TestCase):
@@ -43,7 +44,9 @@ class TestOneViewApiClient(unittest.TestCase):
 
     def test_login(self):
         payload = {"userName": "user", "password": "password", "loginMsgAck": "true"}
-        self.api_client._execute_request = MagicMock(return_value={"sessionID": "session-id"})
+        self.api_client._execute_request = MagicMock(
+            return_value=JsonRestApiResponse(None, {"sessionID": "session-id"})
+        )
         self.api_client.login()
         self.api_client._execute_request.assert_called_once_with("POST", "/login-sessions", data=payload, timeout=None)
         self.assertEqual("session-id", self.api_client.session)
@@ -64,9 +67,9 @@ class TestOneViewApiClient(unittest.TestCase):
 
     def test__collect_members(self):
         return_values = [
-            {"members": [1, 2], "nextPageUri": "/rest/something/1"},
-            {"members": [3, 4], "nextPageUri": "/rest/something/2"},
-            {"members": [5]},
+            JsonRestApiResponse(None, {"members": [1, 2], "nextPageUri": "/rest/something/1"}),
+            JsonRestApiResponse(None, {"members": [3, 4], "nextPageUri": "/rest/something/2"}),
+            JsonRestApiResponse(None, {"members": [5]}),
         ]
         self.api_client._execute_request = MagicMock(side_effect=return_values)
         members = self.api_client._collect_members("/something")
@@ -81,9 +84,9 @@ class TestOneViewApiClient(unittest.TestCase):
 
     def test_list_racks(self):
         return_values = [
-            {"members": [1, 2], "nextPageUri": "/rest/racks/1"},
-            {"members": [3, 4], "nextPageUri": "/rest/racks/2"},
-            {"members": [5]},
+            JsonRestApiResponse(None, {"members": [1, 2], "nextPageUri": "/rest/racks/1"}),
+            JsonRestApiResponse(None, {"members": [3, 4], "nextPageUri": "/rest/racks/2"}),
+            JsonRestApiResponse(None, {"members": [5]}),
         ]
         self.api_client._execute_request = MagicMock(side_effect=return_values)
         racks = self.api_client.list_racks()
@@ -98,9 +101,9 @@ class TestOneViewApiClient(unittest.TestCase):
 
     def test_list_server_hardware(self):
         return_values = [
-            {"members": [1, 2], "nextPageUri": "/rest/server-hardware/1"},
-            {"members": [3, 4], "nextPageUri": "/rest/server-hardware/2"},
-            {"members": [5]},
+            JsonRestApiResponse(None, {"members": [1, 2], "nextPageUri": "/rest/server-hardware/1"}),
+            JsonRestApiResponse(None, {"members": [3, 4], "nextPageUri": "/rest/server-hardware/2"}),
+            JsonRestApiResponse(None, {"members": [5]}),
         ]
         self.api_client._execute_request = MagicMock(side_effect=return_values)
         racks = self.api_client.list_server_hardware()
