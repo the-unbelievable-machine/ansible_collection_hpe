@@ -54,8 +54,18 @@ plugins:
       name: oneview_server_hardware_info
       namespace: ''
       version_added: null
+    oneview_server_profile_compliant:
+      description: Content of /rest/server-profiles endpoint of OneView
+      name: oneview_server_profile_compliant
+      namespace: ''
+      version_added: null
+    oneview_server_profile_info:
+      description: Content of /rest/server-profiles endpoint of OneView
+      name: oneview_server_profile_info
+      namespace: ''
+      version_added: null
   netconf: {}
   shell: {}
   strategy: {}
   vars: {}
-version: 3.1.0
+version: 3.2.0

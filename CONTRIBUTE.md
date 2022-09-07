@@ -105,6 +105,7 @@ If no ticket exists for your change, just drop the prefix.
     Some description
 
     Even more text
+
   ```
 
 - Run `make prepare-release VERSION=<NEW_VERSION>`. This command will:
@@ -151,3 +152,5 @@ If no ticket exists for your change, just drop the prefix.
 > - commit your changes.
 > - Rebase your branch so that only one commit remains.
 > - pickup release process by running `make .prepare-release-finalize VERSION=<NEW_VERSION>`.
+> - If ansible checks keep failing with pip pull errors, you may use `make -o tests` to skip tests.
+>   Those tests will be executed in the CI pipeline on github.

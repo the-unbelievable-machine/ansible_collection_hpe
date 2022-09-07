@@ -1,11 +1,11 @@
-.. _unbelievable.hpe.oneview_server_hardware_info_module:
+.. _unbelievable.hpe.oneview_server_profile_info_module:
 
 
-*********************************************
-unbelievable.hpe.oneview_server_hardware_info
-*********************************************
+********************************************
+unbelievable.hpe.oneview_server_profile_info
+********************************************
 
-**Content of /rest/server-hardware endpoint of OneView**
+**Content of /rest/server-profiles endpoint of OneView**
 
 
 
@@ -16,7 +16,7 @@ unbelievable.hpe.oneview_server_hardware_info
 
 Synopsis
 --------
-- Content of /rest/server-hardware endpoint of OneView
+- Content of /rest/server-profiles endpoint of OneView
 
 
 
@@ -82,25 +82,6 @@ Parameters
                 <td>
                         <div>The hostname or IP address of the OneView server</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: name, host, server, oneview_host, oneview_server</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>hwinfo_entry_fields</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">list</span>
-                         / <span style="color: purple">elements=string</span>
-                    </div>
-                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 2.0.0</div>
-                </td>
-                <td>
-                        <b>Default:</b><br/><div style="color: blue">["formFactor", "memoryMb", "mpFirmwareVersion", "rs_mpHostName", "rs_mpIpAddress4", "mpModel", "name", "partNumber", "processorCoreCount", "processorCount", "processorType", "romVersion", "serialNumber", "serverName", "shortModel", "uuid"]</div>
-                </td>
-                <td>
-                        <div>List of fields to copy from oneview&#x27;s /rest/server-hardware api result, section &#x27;members&#x27; to copy.</div>
-                        <div>There are some special fieldnames: rs_mpHostName=takes mkHostInfo.mpHostName if exists else mpDnsName. rs_mpIpAddress4=first IPv4 address from mpHostInfo.mpIpAddresses with type = static. rs_mpIpAddress6=first IPv6 address from mpHostInfo.mpIpAddresses with type = static</div>
                 </td>
             </tr>
             <tr>
@@ -182,26 +163,6 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>rack_info</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.2.0</div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>no</li>
-                                    <li><div style="color: blue"><b>yes</b>&nbsp;&larr;</div></li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Enrich entries with rack_name and position in rack.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>username</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -248,12 +209,12 @@ Examples
 
 .. code-block:: yaml
 
-    - name: Get server-hardware
-      unbelievable.oneview_server_hardware_info:
+    - name: Get server-profiles
+      unbelievable.oneview_server_profile_info:
         hostname: https://oneview.server.domain
         username: user
         password: secret
-      register: servers
+      register: result
 
 
 
@@ -272,7 +233,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>servers</b>
+                    <b>profiles</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">list</span>
@@ -281,8 +242,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>success</td>
                 <td>
-                            <div>List of servers. Always present, but may be empty.</div>
-                            <div>Content depends on api_version and configuration.</div>
+                            <div>List of server profile. Always present, but may be empty.</div>
                     <br/>
                 </td>
             </tr>

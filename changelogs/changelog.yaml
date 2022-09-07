@@ -129,3 +129,27 @@ releases:
     fragments:
     - release-summary.yml
     release_date: '2022-08-12'
+  3.2.0:
+    changes:
+      bugfixes:
+      - Module oneview_server_hardware_info - Logout from OneView even if module fails.
+      - Module oneview_server_racks_info - Logout from OneView even if module fails.
+      minor_changes:
+      - Module oneview_server_hardware_info - add support for "filter" parameter
+      release_summary: "Feature release:\n  - new modules: oneview_server_profile_info,
+        oneview_server_profile_compliant\n  - minor bugfixes\n"
+    fragments:
+    - module_oneview_server_profile_compliant.yml
+    - module_oneview_server_profile_info.yml
+    - oneview_server_hardware_info-bugfix-logout.yaml
+    - oneview_server_hardware_info-param-filter.yaml
+    - oneview_server_racks_info-bugfix-logout.yaml
+    - release-summary.yml
+    modules:
+    - description: Module to update a server profile from the server profile template.
+      name: oneview_server_profile_compliant
+      namespace: unbelievable.hpe
+    - description: Module to list server profiles.
+      name: oneview_server_profile_info
+      namespace: unbelievable.hpe
+    release_date: '2022-09-07'

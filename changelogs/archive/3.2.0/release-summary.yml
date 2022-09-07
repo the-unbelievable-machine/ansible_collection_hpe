@@ -1,0 +1,4 @@
+  release_summary: |
+    Feature release:
+      - new modules: oneview_server_profile_info, oneview_server_profile_compliant
+      - minor bugfixes
