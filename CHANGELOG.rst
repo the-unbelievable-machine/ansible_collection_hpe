@@ -5,6 +5,40 @@ unbelievable.hpe Release Notes
 .. contents:: Topics
 
 
+v3.2.0
+======
+
+Release Summary
+---------------
+
+Feature release:
+  - new modules: oneview_server_profile_info, oneview_server_profile_compliant
+  - minor bugfixes
+
+
+Minor Changes
+-------------
+
+- Module oneview_server_hardware_info - add support for "filter" parameter
+
+Bugfixes
+--------
+
+- Module oneview_server_hardware_info - Logout from OneView even if module fails.
+- Module oneview_server_racks_info - Logout from OneView even if module fails.
+
+New Modules
+-----------
+
+Unbelievable
+~~~~~~~~~~~~
+
+hpe
+^^^
+
+- unbelievable.hpe.unbelievable.hpe.oneview_server_profile_compliant - Module to update a server profile from the server profile template.
+- unbelievable.hpe.unbelievable.hpe.oneview_server_profile_info - Module to list server profiles.
+
 v3.1.0
 ======
 
