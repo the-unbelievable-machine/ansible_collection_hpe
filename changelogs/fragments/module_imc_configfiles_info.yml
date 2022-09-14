@@ -1,0 +1,5 @@
+---
+add plugin.module:
+  - name: imc_configfiles_info
+    namespace: unbelievable.hpe
+    description: Module to list IMC config files / directories
