@@ -246,7 +246,7 @@ class JsonRestApiClient(object):
         )
         if r.ok:
             content = None
-            if r.headers.get("Content-Type", "").startswith("application/json"):
+            if r.headers.get("Content-Type", "").startswith("application/json") and r.content:
                 content = r.json()
             elif r.content:
                 self.logger.warn("no json response '{0}' from {1} request to {2}".format(r.content, verb, url))
