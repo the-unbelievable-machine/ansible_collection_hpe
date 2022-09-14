@@ -71,11 +71,23 @@ class ImcApiClient(JsonRestApiClient):
     def list_folder(self, folder_id):
         return self._collect_content("/icc/confFile/list/{0}?size=100".format(folder_id), "confFile")
 
-    def get_file(self, folder_id, file_name, file_type):
+    def get_file_id(self, folder_id, file_name, file_type):
         if file_name.startswith("/"):
             file_name = file_name[1:]
         items = self.list_folder(folder_id)
-        return self._get_folder_item(items, file_name, file_type)
+        file_info = self._get_folder_item(items, file_name, file_type)
+        return file_info["confFileId"] if file_info else None
+
+    def get_file(self, file_id):
+        return self.get_request("/icc/confFile/{0}".format(file_id))
+
+    def delete_file(self, file_id):
+        return self.delete_request("/icc/confFile/{0}".format(file_id))
+
+    def create_file(self, folder_id, file_name, file_type, content):
+        payload = {"confFileName": file_name, "confFileType": file_type, "cfgFileParent": folder_id, "content": content}
+        api_response = self.post_request_with_headers("/icc/confFile", data=payload)
+        return api_response.headers["location"].split("/")[-1]
 
     def _get_folder_item(self, items, file_name, *item_types):
         for item in items:
