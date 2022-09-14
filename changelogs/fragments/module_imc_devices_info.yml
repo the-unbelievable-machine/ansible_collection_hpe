@@ -1,0 +1,5 @@
+---
+add plugin.module:
+  - name: imc_devices_info
+    namespace: unbelievable.hpe
+    description: Module to list IMC devices
