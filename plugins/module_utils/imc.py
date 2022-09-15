@@ -20,10 +20,17 @@ from requests.auth import HTTPDigestAuth
 class ImcApiClient(JsonRestApiClient):
 
     API_BASE = "/imcrs/"
-    TYPE_FOLDER = "-1"
-    TYPE_FILE = "1"
-    TYPE_SEGMENT = "2"
-    TYPE_CLI_SCRIPT = "4"
+    FILE_TYPE_FOLDER = "-1"
+    FILE_TYPE_FILE = "1"
+    FILE_TYPE_SEGMENT = "2"
+    FILE_TYPE_CLI_SCRIPT = "4"
+    _FILE_TYPE_NAME_2_TYPE = {
+        "folder": FILE_TYPE_FOLDER,
+        "file": FILE_TYPE_FILE,
+        "segment": FILE_TYPE_SEGMENT,
+        "cli_script": FILE_TYPE_CLI_SCRIPT,
+    }
+    _FILE_TYPE_2_NAME = {v: k for k, v in _FILE_TYPE_NAME_2_TYPE.items()}
 
     def __init__(
         self,
@@ -51,6 +58,12 @@ class ImcApiClient(JsonRestApiClient):
     def get_auth(self):
         return HTTPDigestAuth(self.username, self.password) if self.username else None
 
+    def get_file_type(self, file_type_name):
+        return ImcApiClient._FILE_TYPE_NAME_2_TYPE.get(file_type_name)
+
+    def get_file_type_name(self, file_type):
+        return ImcApiClient._FILE_TYPE_2_NAME.get(str(file_type))
+
     def list_devices(self):
         return self._collect_content("/plat/res/device?size=100", "device")
 
@@ -60,7 +73,7 @@ class ImcApiClient(JsonRestApiClient):
             folder_path = folder_path[1:]
         folder_name, _, sub_folders = folder_path.partition("/")
         items = self.list_folder(parent_folder_id)
-        folder = self._get_folder_item(items, folder_name, ImcApiClient.TYPE_FOLDER)
+        folder = self._get_folder_item(items, folder_name, ImcApiClient.FILE_TYPE_FOLDER)
         if folder:
             if not sub_folders:
                 folder_id = folder["confFileId"]
@@ -88,6 +101,19 @@ class ImcApiClient(JsonRestApiClient):
         payload = {"confFileName": file_name, "confFileType": file_type, "cfgFileParent": folder_id, "content": content}
         api_response = self.post_request_with_headers("/icc/confFile", data=payload)
         return api_response.headers["location"].split("/")[-1]
+
+    def create_folder(self, parent_folder_id, folder_name):
+        payload = {
+            "confFileName": folder_name,
+            "confFileType": ImcApiClient.FILE_TYPE_FOLDER,
+            "cfgFileParent": parent_folder_id,
+            "content": "",
+        }
+        api_response = self.post_request_with_headers("/icc/confFile", data=payload)
+        return api_response.headers["location"].split("/")[-1]
+
+    def delete_folder(self, folder_id):
+        return self.delete_request("/icc/confFile/{0}".format(folder_id))
 
     def _get_folder_item(self, items, file_name, *item_types):
         for item in items:
@@ -145,13 +171,17 @@ class ImcModuleBase(ModuleBase):
             logger=logger,
         )
 
-    def get_folder_id(self):
+    def get_folder_id(self, param_name_name="folder_name", param_name_id="folder_id"):
         folder_id = None
-        if self.module.params.get("folder_name"):
-            folder_name = self.module.params.get("folder_name")
+        if self.module.params.get(param_name_name):
+            folder_name = self.module.params.get(param_name_name)
             folder_id = self.api_client.get_folder_id(folder_name)
             if not folder_id:
                 self.module.fail_json(msg="Folder '{0}' not found".format(folder_name))
         else:
-            folder_id = self.module.params.get("folder_id")
+            folder_id = self.module.params.get(param_name_id)
         return folder_id
+
+    def get_file_type(self):
+        file_type_name = self.module.params.get("file_type")
+        return self.api_client.get_file_type(file_type_name)
