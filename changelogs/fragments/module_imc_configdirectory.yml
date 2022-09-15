@@ -1,0 +1,5 @@
+---
+add plugin.module:
+  - name: imc_configdiretory
+    namespace: unbelievable.hpe
+    description: Module to create/delete IMC config directories
