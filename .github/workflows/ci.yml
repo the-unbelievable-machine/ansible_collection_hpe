@@ -61,7 +61,7 @@ jobs:
         with:
           env: |
             COLLECTION_PATH=ansible_collections/${NAMESPACE}/${COLLECTION_NAME}
-            TEST_INVOCATION="sanity --docker ${{ matrix.test_container }} --python {{ matrix.python }} --exclude dev_tools/**.py -v --color --coverage"
+            TEST_INVOCATION="sanity --docker ${{ matrix.test_container }} --python ${{ matrix.python }} --exclude dev_tools/**.py -v --color --coverage"
 
       - name: Check out code
         uses: actions/checkout@v2
