@@ -71,7 +71,7 @@ class ImcApiClient(JsonRestApiClient):
         folder_id = None
         if folder_path.startswith("/"):
             folder_path = folder_path[1:]
-        folder_name, _, sub_folders = folder_path.partition("/")
+        folder_name, _ignore, sub_folders = folder_path.partition("/")
         items = self.list_folder(parent_folder_id)
         folder = self._get_folder_item(items, folder_name, ImcApiClient.FILE_TYPE_FOLDER)
         if folder:
