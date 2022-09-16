@@ -39,6 +39,26 @@ plugins:
       name: ilo_thermal_settings
       namespace: ''
       version_added: null
+    imc_configdirectory:
+      description: Create/Delete config file directory
+      name: imc_configdirectory
+      namespace: ''
+      version_added: null
+    imc_configfile:
+      description: Create/Delete config files
+      name: imc_configfile
+      namespace: ''
+      version_added: null
+    imc_configfiles_info:
+      description: List of content (config files) of a folder.
+      name: imc_configfiles_info
+      namespace: ''
+      version_added: null
+    imc_devices_info:
+      description: Content of /plat/res/device endpoint of IMC
+      name: imc_devices_info
+      namespace: ''
+      version_added: null
     oneview_inventory:
       description: Generates the same information as the oneview_inventory plugin.
       name: oneview_inventory
@@ -68,4 +88,4 @@ plugins:
   shell: {}
   strategy: {}
   vars: {}
-version: 3.2.0
+version: 3.3.0
