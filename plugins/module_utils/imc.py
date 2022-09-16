@@ -14,8 +14,6 @@ from ansible_collections.unbelievable.hpe.plugins.module_utils.api_client import
     ModuleBase,
 )
 
-from requests.auth import HTTPDigestAuth
-
 
 class ImcApiClient(JsonRestApiClient):
 
@@ -56,6 +54,8 @@ class ImcApiClient(JsonRestApiClient):
         )
 
     def get_auth(self):
+        from requests.auth import HTTPDigestAuth
+
         return HTTPDigestAuth(self.username, self.password) if self.username else None
 
     def get_file_type(self, file_type_name):
