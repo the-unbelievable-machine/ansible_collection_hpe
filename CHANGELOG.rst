@@ -5,6 +5,30 @@ unbelievable.hpe Release Notes
 .. contents:: Topics
 
 
+v3.3.0
+======
+
+Release Summary
+---------------
+
+Feature release:
+  - new modules for handling imc config files.
+
+
+New Modules
+-----------
+
+Unbelievable
+~~~~~~~~~~~~
+
+hpe
+^^^
+
+- unbelievable.hpe.unbelievable.hpe.imc_configdiretory - Module to create/delete IMC config directories
+- unbelievable.hpe.unbelievable.hpe.imc_configfile - Module to create/update/delete IMC config files
+- unbelievable.hpe.unbelievable.hpe.imc_configfiles_info - Module to list IMC config files / directories
+- unbelievable.hpe.unbelievable.hpe.imc_devices_info - Module to list IMC devices
+
 v3.2.0
 ======
 
@@ -30,14 +54,8 @@ Bugfixes
 New Modules
 -----------
 
-Unbelievable
-~~~~~~~~~~~~
-
-hpe
-^^^
-
-- unbelievable.hpe.unbelievable.hpe.oneview_server_profile_compliant - Module to update a server profile from the server profile template.
-- unbelievable.hpe.unbelievable.hpe.oneview_server_profile_info - Module to list server profiles.
+- unbelievable.hpe.oneview_server_profile_compliant - Content of /rest/server-profiles endpoint of OneView
+- unbelievable.hpe.oneview_server_profile_info - Content of /rest/server-profiles endpoint of OneView
 
 v3.1.0
 ======

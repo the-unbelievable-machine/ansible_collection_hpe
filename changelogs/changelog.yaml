@@ -146,10 +146,34 @@ releases:
     - oneview_server_racks_info-bugfix-logout.yaml
     - release-summary.yml
     modules:
-    - description: Module to update a server profile from the server profile template.
+    - description: Content of /rest/server-profiles endpoint of OneView
       name: oneview_server_profile_compliant
-      namespace: unbelievable.hpe
-    - description: Module to list server profiles.
+      namespace: ''
+    - description: Content of /rest/server-profiles endpoint of OneView
       name: oneview_server_profile_info
-      namespace: unbelievable.hpe
+      namespace: ''
     release_date: '2022-09-07'
+  3.3.0:
+    changes:
+      release_summary: "Feature release:\n  - new modules for handling imc config
+        files.\n"
+    fragments:
+    - module_imc_configdirectory.yml
+    - module_imc_configfile.yml
+    - module_imc_configfiles_info.yml
+    - module_imc_devices_info.yml
+    - release-summary.yml
+    modules:
+    - description: Module to create/delete IMC config directories
+      name: imc_configdiretory
+      namespace: unbelievable.hpe
+    - description: Module to create/update/delete IMC config files
+      name: imc_configfile
+      namespace: unbelievable.hpe
+    - description: Module to list IMC config files / directories
+      name: imc_configfiles_info
+      namespace: unbelievable.hpe
+    - description: Module to list IMC devices
+      name: imc_devices_info
+      namespace: unbelievable.hpe
+    release_date: '2022-09-16'
